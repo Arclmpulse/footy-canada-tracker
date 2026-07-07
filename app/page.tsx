@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -59,6 +59,28 @@ export default function DashboardPage() {
   };
 
   const activeStadium = STADIUMS.find(s => s.id === stadium) || STADIUMS[0];
+
+  const [manualRumours, setManualRumours] = useState<Record<string, TransferRumour[]>>({});
+
+  // Load manual rumours from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('canada-tracker-manual-rumours');
+      if (saved) {
+        setManualRumours(JSON.parse(saved));
+      }
+    } catch { }
+  }, []);
+
+  const mergedRumours = useMemo(() => {
+    const merged = { ...rumours };
+    for (const [pid, list] of Object.entries(manualRumours)) {
+      const existingIds = new Set((merged[pid] ?? []).map(r => r.id));
+      const uniqueManual = (list ?? []).filter(r => !existingIds.has(r.id));
+      merged[pid] = [...uniqueManual, ...(merged[pid] ?? [])];
+    }
+    return merged;
+  }, [rumours, manualRumours]);
 
   // ──── Fetch stats from local backend ────────────────────────────
   const fetchData = useCallback(async () => {
@@ -210,42 +232,68 @@ export default function DashboardPage() {
   }) => {
     if (!rumourdModal) return;
     const { playerId } = rumourdModal;
+
+    const newRumour: TransferRumour = {
+      id: 'rumour-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      playerId,
+      headline: rumourData.headline || '',
+      source: rumourData.source || 'Manual',
+      date: new Date().toISOString().split('T')[0],
+      isManual: true,
+      targetClub: rumourData.targetClub || undefined,
+      targetClubId: rumourData.targetClubId ? parseInt(rumourData.targetClubId as any, 10) : undefined,
+      feeOriginal: rumourData.feeOriginal || undefined,
+      feeAmount: rumourData.feeAmount ? parseFloat(rumourData.feeAmount as any) : undefined,
+      currency: rumourData.currency || undefined,
+    };
+
+    // 1. Save client-side (local storage)
+    const nextManual = {
+      ...manualRumours,
+      [playerId]: [newRumour, ...(manualRumours[playerId] ?? [])],
+    };
+    setManualRumours(nextManual);
     try {
-      const response = await fetch('/api/rumours', {
+      localStorage.setItem('canada-tracker-manual-rumours', JSON.stringify(nextManual));
+    } catch { }
+
+    // 2. Attempt POST to API (fails silently in read-only hosting)
+    try {
+      await fetch('/api/rumours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ playerId, ...rumourData }),
       });
-      const data = await response.json();
-      if (data.ok && data.rumour) {
-        setRumours(prev => ({
-          ...prev,
-          [playerId]: [data.rumour, ...(prev[playerId] ?? [])],
-        }));
-      }
     } catch (err) {
-      console.error('Failed to save rumour:', err);
+      console.warn('API save failed (likely read-only hosting like Vercel). Using client-side storage.', err);
     }
+
     setRumourModal(null);
   };
 
   const handleDeleteRumour = async (playerId: string, rumourId?: string) => {
+    // 1. Delete client-side (local storage)
+    const nextManual = { ...manualRumours };
+    if (nextManual[playerId]) {
+      if (rumourId) {
+        nextManual[playerId] = (nextManual[playerId] ?? []).filter(r => r.id !== rumourId);
+      } else {
+        delete nextManual[playerId];
+      }
+      setManualRumours(nextManual);
+      try {
+        localStorage.setItem('canada-tracker-manual-rumours', JSON.stringify(nextManual));
+      } catch { }
+    }
+
+    // 2. Attempt DELETE to API (fails silently in read-only hosting)
     try {
       const url = rumourId
         ? `/api/rumours?playerId=${playerId}&id=${rumourId}`
         : `/api/rumours?playerId=${playerId}`;
-      const response = await fetch(url, { method: 'DELETE' });
-      const data = await response.json();
-      if (data.ok) {
-        setRumours(prev => ({
-          ...prev,
-          [playerId]: rumourId
-            ? (prev[playerId] ?? []).filter(r => r.id !== rumourId)
-            : (prev[playerId] ?? []).filter(r => !r.isManual),
-        }));
-      }
+      await fetch(url, { method: 'DELETE' });
     } catch (err) {
-      console.error('Failed to delete rumour:', err);
+      console.warn('API delete failed (likely read-only hosting like Vercel). Using client-side storage.', err);
     }
   };
 
@@ -366,7 +414,7 @@ export default function DashboardPage() {
               <StatsTable
                 players={players}
                 stats={stats}
-                rumours={rumours}
+                rumours={mergedRumours}
                 lineupPlayerIds={lineupPlayerIds}
                 activeLeagues={activeLeagues}
                 onAddRumour={handleAddRumour}
@@ -383,14 +431,14 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v1.0 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v1.1 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}
       {rumourdModal && (
         <RumourModal
           playerName={rumourdModal.playerName}
-          existingRumours={rumours[rumourdModal.playerId] ?? []}
+          existingRumours={mergedRumours[rumourdModal.playerId] ?? []}
           onSave={handleSaveRumour}
           onDeleteRumour={rumourId => handleDeleteRumour(rumourdModal.playerId, rumourId)}
           onClose={() => setRumourModal(null)}

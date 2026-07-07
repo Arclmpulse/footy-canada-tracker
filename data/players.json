@@ -198,5 +198,145 @@
     "club": "Crystal Palace U18",
     "league": "League One",
     "fotmob_id": 1415372
+  },
+  {
+    "id": "dayne-st-clair",
+    "name": "Dayne St. Clair",
+    "positions": [
+      "GK"
+    ],
+    "club": "Inter Miami CF",
+    "league": "Major League Soccer",
+    "fotmob_id": 1026105
+  },
+  {
+    "id": "maxime-crepeau",
+    "name": "Maxime Crépeau",
+    "positions": [
+      "GK"
+    ],
+    "club": "Orlando City",
+    "league": "Major League Soccer",
+    "fotmob_id": 464919
+  },
+  {
+    "id": "ralph-priso",
+    "name": "Ralph Priso",
+    "positions": [
+      "CB",
+      "CM",
+      "DM"
+    ],
+    "club": "Vancouver Whitecaps",
+    "league": "Major League Soccer",
+    "fotmob_id": 1082109
+  },
+  {
+    "id": "jacob-shaffelburg",
+    "name": "Jacob Shaffelburg",
+    "positions": [
+      "LW",
+      "RM",
+      "LWB",
+      "RW"
+    ],
+    "club": "Los Angeles FC",
+    "league": "Major League Soccer",
+    "fotmob_id": 1023943
+  },
+  {
+    "id": "alfie-jones",
+    "name": "Alfie Jones",
+    "positions": [
+      "CB"
+    ],
+    "club": "Middlesbrough",
+    "league": "Championship",
+    "fotmob_id": 789598
+  },
+  {
+    "id": "richie-laryea",
+    "name": "Richie Laryea",
+    "positions": [
+      "LB",
+      "RB",
+      "CB",
+      "DM",
+      "RM",
+      "RWB",
+      "RW"
+    ],
+    "club": "Toronto FC",
+    "league": "Major League Soccer",
+    "fotmob_id": 729506
+  },
+  {
+    "id": "mathieu-choiniere",
+    "name": "Mathieu Choinière",
+    "positions": [
+      "CM",
+      "DM"
+    ],
+    "club": "Los Angeles FC",
+    "league": "Major League Soccer",
+    "fotmob_id": 943428
+  },
+  {
+    "id": "jayden-nelson",
+    "name": "Jayden Nelson",
+    "positions": [
+      "LW",
+      "LM",
+      "RW",
+      "RM"
+    ],
+    "club": "Austin FC",
+    "league": "Major League Soccer",
+    "fotmob_id": 1082106
+  },
+  {
+    "id": "jamie-knight-lebel",
+    "name": "Jamie Knight-Lebel",
+    "positions": [
+      "CB",
+      "RM"
+    ],
+    "club": "Bristol City",
+    "league": "League Two",
+    "fotmob_id": 1524014
+  },
+  {
+    "id": "jacen-russell-rowe",
+    "name": "Jacen Russell-Rowe",
+    "positions": [
+      "ST"
+    ],
+    "club": "Toulouse",
+    "league": "Ligue 1",
+    "fotmob_id": 1106866
+  },
+  {
+    "id": "jeevan-badwal",
+    "name": "Jeevan Badwal",
+    "positions": [
+      "AM",
+      "RW",
+      "DM",
+      "CM",
+      "ST"
+    ],
+    "club": "Vancouver Whitecaps",
+    "league": "Major League Soccer",
+    "fotmob_id": 1610145
+  },
+  {
+    "id": "daniel-jebbison",
+    "name": "Daniel Jebbison",
+    "positions": [
+      "ST"
+    ],
+    "club": "AFC Bournemouth",
+    "league": "Championship",
+    "fotmob_id": 1253827
   }
 ]
