@@ -61,6 +61,7 @@ export default function DashboardPage() {
   const activeStadium = STADIUMS.find(s => s.id === stadium) || STADIUMS[0];
 
   const [manualRumours, setManualRumours] = useState<Record<string, TransferRumour[]>>({});
+  const [deletedRumourIds, setDeletedRumourIds] = useState<Set<string>>(new Set());
 
   // Load manual rumours from localStorage on mount
   useEffect(() => {
@@ -72,6 +73,16 @@ export default function DashboardPage() {
     } catch { }
   }, []);
 
+  // Load deleted rumours from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('canada-tracker-deleted-rumours');
+      if (saved) {
+        setDeletedRumourIds(new Set(JSON.parse(saved)));
+      }
+    } catch { }
+  }, []);
+
   const mergedRumours = useMemo(() => {
     const merged = { ...rumours };
     for (const [pid, list] of Object.entries(manualRumours)) {
@@ -79,8 +90,14 @@ export default function DashboardPage() {
       const uniqueManual = (list ?? []).filter(r => !existingIds.has(r.id));
       merged[pid] = [...uniqueManual, ...(merged[pid] ?? [])];
     }
+
+    // Filter out deleted rumours (e.g. server-side pre-baked rumours)
+    for (const pid of Object.keys(merged)) {
+      merged[pid] = (merged[pid] ?? []).filter(r => !deletedRumourIds.has(r.id));
+    }
+
     return merged;
-  }, [rumours, manualRumours]);
+  }, [rumours, manualRumours, deletedRumourIds]);
 
   // ──── Fetch stats from local backend ────────────────────────────
   const fetchData = useCallback(async () => {
@@ -286,7 +303,19 @@ export default function DashboardPage() {
       } catch { }
     }
 
-    // 2. Attempt DELETE to API (fails silently in read-only hosting)
+    // 2. Track deleted backend rumours in localStorage
+    if (rumourId) {
+      setDeletedRumourIds(prev => {
+        const next = new Set(prev);
+        next.add(rumourId);
+        try {
+          localStorage.setItem('canada-tracker-deleted-rumours', JSON.stringify([...next]));
+        } catch { }
+        return next;
+      });
+    }
+
+    // 3. Attempt DELETE to API (fails silently in read-only hosting)
     try {
       const url = rumourId
         ? `/api/rumours?playerId=${playerId}&id=${rumourId}`
@@ -431,7 +460,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v1.2 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v1.2.1 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}
