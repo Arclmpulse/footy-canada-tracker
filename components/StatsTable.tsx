@@ -176,10 +176,19 @@ export default function StatsTable({
                 <td>
                   <div className="player-name-cell">
                     {s?.injured && <span className="injury-icon" title="Injured">🇨🇭</span>}
-                    {player.fotmob_url
-                      ? <a className="player-name-link" href={player.fotmob_url} target="_blank" rel="noreferrer">{player.name}</a>
-                      : <span className="player-name-text">{player.name}</span>
-                    }
+                    {player.fotmob_url || player.fotmob_id ? (
+                      <a
+                        className="player-name-link"
+                        href={player.fotmob_url || `https://www.fotmob.com/players/${player.fotmob_id}/`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onPointerDown={(e) => e.stopPropagation()}
+                      >
+                        {player.name}
+                      </a>
+                    ) : (
+                      <span className="player-name-text">{player.name}</span>
+                    )}
                   </div>
                 </td>
 
@@ -359,6 +368,7 @@ function RumoursCell({
               className="btn btn-danger"
               style={{ padding: '0px 3px', fontSize: 10, flexShrink: 0, border: 'none', background: 'none', color: '#ff4d4d', cursor: 'pointer', fontWeight: 'bold' }}
               onClick={e => { e.stopPropagation(); onDelete(r.id); }}
+              onPointerDown={e => e.stopPropagation()}
               title="Delete rumour"
             >×</button>
           )}
@@ -367,6 +377,7 @@ function RumoursCell({
       <button 
         className="add-rumour-btn" 
         onClick={e => { e.stopPropagation(); onAdd(); }}
+        onPointerDown={e => e.stopPropagation()}
         style={{ alignSelf: 'flex-start', marginTop: rumours.length > 0 ? 2 : 0, fontSize: 10, padding: '2px 6px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: 4, background: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}
       >
         + Add Rumour

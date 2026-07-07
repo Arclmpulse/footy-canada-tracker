@@ -338,5 +338,60 @@
     "club": "AFC Bournemouth",
     "league": "Championship",
     "fotmob_id": 1253827
+  },
+  {
+    "id": "jayden-hibbert",
+    "name": "Jayden Hibbert",
+    "positions": [
+      "GK"
+    ],
+    "club": "Atlanta United 2",
+    "league": "MLS Next Pro",
+    "fotmob_id": 1649302
+  },
+  {
+    "id": "shola-jimoh",
+    "name": "Shola Jimoh",
+    "positions": [
+      "forward"
+    ],
+    "club": "Inter Toronto FC",
+    "league": "Premier League",
+    "fotmob_id": 1660444
+  },
+  {
+    "id": "nikola-markovic",
+    "name": "Nikola Markovic",
+    "positions": [
+      "RB",
+      "CB",
+      "CM"
+    ],
+    "club": "DC United",
+    "league": "Major League Soccer",
+    "fotmob_id": 1904329
+  },
+  {
+    "id": "alessandro-biello",
+    "name": "Alessandro Biello",
+    "positions": [
+      "DM",
+      "CM",
+      "RW",
+      "ST"
+    ],
+    "club": "Supra du Quebec",
+    "league": "Premier League",
+    "fotmob_id": 1579844
+  },
+  {
+    "id": "elijah-roche",
+    "name": "Elijah Roche",
+    "positions": [
+      "defender"
+    ],
+    "club": "Toronto FC Academy Under 16",
+    "league": "MLS Next Pro",
+    "fotmob_id": 1785163
   }
 ]

@@ -37,39 +37,46 @@ export async function runScrape(): Promise<boolean> {
     const cache = loadCache();
     const newPlayersStats: Record<string, PlayerStats> = {};
 
-    console.log(`[Scraper] Starting FotMob sync for ${players.length} players...`);
+    console.log(`[Scraper] Starting optimized parallel FotMob sync for ${players.length} players...`);
 
-    for (let i = 0; i < players.length; i++) {
-      const p = players[i];
-      if (!p.fotmob_id) {
-        console.warn(`[Scraper] Skipping ${p.name} — no fotmob_id configured`);
-        continue;
+    const CHUNK_SIZE = 5;
+    for (let i = 0; i < players.length; i += CHUNK_SIZE) {
+      const chunk = players.slice(i, i + CHUNK_SIZE);
+      console.log(`[Scraper] Syncing chunk ${Math.floor(i / CHUNK_SIZE) + 1}/${Math.ceil(players.length / CHUNK_SIZE)}`);
+
+      await Promise.all(
+        chunk.map(async (p) => {
+          if (!p.fotmob_id) {
+            console.warn(`[Scraper] Skipping ${p.name} — no fotmob_id configured`);
+            return;
+          }
+
+          console.log(`[Scraper] Fetching ${p.name} (${p.fotmob_id})`);
+          const stats = await fetchFotMobPlayerStats(p.id, p.fotmob_id);
+
+          if (stats) {
+            newPlayersStats[p.id] = stats;
+
+            if (stats.club && stats.club !== p.club) {
+              console.log(`[Scraper] Updating club for ${p.name}: "${p.club}" -> "${stats.club}"`);
+              p.club = stats.club;
+            }
+            if (stats.league && stats.league !== p.league) {
+              p.league = stats.league;
+            }
+          } else {
+            console.warn(`[Scraper] Failed to fetch stats for ${p.name}, retaining cached stats`);
+            if (cache.players[p.id]) {
+              newPlayersStats[p.id] = cache.players[p.id];
+            }
+          }
+        })
+      );
+
+      // 1-second delay between batches to respect rate limits politely
+      if (i + CHUNK_SIZE < players.length) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-
-      console.log(`[Scraper] Syncing ${p.name} (${i + 1}/${players.length})`);
-      const stats = await fetchFotMobPlayerStats(p.id, p.fotmob_id);
-
-      if (stats) {
-        newPlayersStats[p.id] = stats;
-        
-        // Also update player's local club and league in players.json if it changed!
-        // This is excellent because it syncs your roster clubs automatically too!
-        if (stats.club && stats.club !== p.club) {
-          console.log(`[Scraper] Updating club for ${p.name}: "${p.club}" -> "${stats.club}"`);
-          p.club = stats.club;
-        }
-        if (stats.league && stats.league !== p.league) {
-          p.league = stats.league;
-        }
-      } else {
-        console.warn(`[Scraper] Failed to fetch stats for ${p.name}, retaining cached stats if present`);
-        if (cache.players[p.id]) {
-          newPlayersStats[p.id] = cache.players[p.id];
-        }
-      }
-
-      // Respect rate limits with a 1-second delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     // Save updated roster configuration

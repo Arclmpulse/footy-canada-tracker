@@ -431,7 +431,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v1.1 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v1.2 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}
