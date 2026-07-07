@@ -1,0 +1,1100 @@
+{
+  "lastUpdated": "2026-07-06T23:41:09.050Z",
+  "players": {
+    "jonathan-david": {
+      "playerId": "jonathan-david",
+      "appearances": 35,
+      "goals": 6,
+      "assists": 4,
+      "seasonAvgRating": 6.7,
+      "last5Games": [
+        {
+          "date": "2026-05-24",
+          "opponent": "Torino",
+          "rating": 5.6,
+          "minutesPlayed": 28,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-05-09",
+          "opponent": "Lecce",
+          "rating": null,
+          "minutesPlayed": 7,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-05-03",
+          "opponent": "Hellas Verona",
+          "rating": 6.4,
+          "minutesPlayed": 69,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-04-26",
+          "opponent": "Milan",
+          "rating": 6.5,
+          "minutesPlayed": 87,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-04-19",
+          "opponent": "Bologna",
+          "rating": 7.1,
+          "minutesPlayed": 72,
+          "competition": "Serie A"
+        }
+      ],
+      "last5AvgRating": 6.4,
+      "lastGameRating": 5.6,
+      "lastGameDate": "2026-05-24",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Juventus",
+      "league": "Serie A",
+      "positionsDetailed": [
+        "ST",
+        "AM"
+      ],
+      "age": 26,
+      "marketValue": "€32.9m",
+      "teamId": 9885,
+      "leagueId": 55
+    },
+    "cyle-larin": {
+      "playerId": "cyle-larin",
+      "appearances": 16,
+      "goals": 8,
+      "assists": 1,
+      "seasonAvgRating": 7,
+      "last5Games": [
+        {
+          "date": "2026-05-12",
+          "opponent": "Middlesbrough",
+          "rating": null,
+          "minutesPlayed": 36,
+          "competition": "Championship Playoff"
+        },
+        {
+          "date": "2026-05-09",
+          "opponent": "Middlesbrough",
+          "rating": null,
+          "minutesPlayed": 60,
+          "competition": "Championship Playoff"
+        },
+        {
+          "date": "2026-05-02",
+          "opponent": "Preston North End",
+          "rating": 7.4,
+          "minutesPlayed": 22,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-28",
+          "opponent": "Ipswich Town",
+          "rating": 7.8,
+          "minutesPlayed": 81,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-25",
+          "opponent": "Manchester City",
+          "rating": 5.9,
+          "minutesPlayed": 29,
+          "competition": "FA Cup"
+        }
+      ],
+      "last5AvgRating": 7,
+      "lastGameRating": null,
+      "lastGameDate": "2026-05-12",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Southampton",
+      "league": "Championship",
+      "positionsDetailed": [
+        "ST",
+        "AM"
+      ],
+      "age": 31,
+      "marketValue": "€2m",
+      "teamId": 8466,
+      "leagueId": 48
+    },
+    "tani-oluwaseyi": {
+      "playerId": "tani-oluwaseyi",
+      "appearances": 27,
+      "goals": 2,
+      "assists": 2,
+      "seasonAvgRating": 6.2,
+      "last5Games": [
+        {
+          "date": "2026-05-17",
+          "opponent": "Rayo Vallecano",
+          "rating": 6.3,
+          "minutesPlayed": 63,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-05-10",
+          "opponent": "Mallorca",
+          "rating": 6,
+          "minutesPlayed": 63,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-04-23",
+          "opponent": "Real Oviedo",
+          "rating": 5.9,
+          "minutesPlayed": 63,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-04-12",
+          "opponent": "Athletic Club",
+          "rating": 7.2,
+          "minutesPlayed": 69,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-03-20",
+          "opponent": "Real Sociedad",
+          "rating": null,
+          "minutesPlayed": 1,
+          "competition": "LaLiga"
+        }
+      ],
+      "last5AvgRating": 6.4,
+      "lastGameRating": 6.3,
+      "lastGameDate": "2026-05-17",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Villarreal",
+      "league": "LaLiga",
+      "positionsDetailed": [
+        "ST",
+        "RM"
+      ],
+      "age": 26,
+      "marketValue": "€7.5m",
+      "teamId": 10205,
+      "leagueId": 87
+    },
+    "promise-david": {
+      "playerId": "promise-david",
+      "appearances": 24,
+      "goals": 9,
+      "assists": 1,
+      "seasonAvgRating": 6.9,
+      "last5Games": [
+        {
+          "date": "2026-02-21",
+          "opponent": "Royal Antwerp",
+          "rating": 7.2,
+          "minutesPlayed": 76,
+          "competition": "Belgian Pro League"
+        },
+        {
+          "date": "2026-02-14",
+          "opponent": "Standard Liege",
+          "rating": 6.5,
+          "minutesPlayed": 90,
+          "competition": "Belgian Pro League"
+        },
+        {
+          "date": "2026-02-11",
+          "opponent": "Sporting Charleroi",
+          "rating": 8.6,
+          "minutesPlayed": 89,
+          "competition": "Cup"
+        },
+        {
+          "date": "2026-02-08",
+          "opponent": "RAAL La Louviere",
+          "rating": 7.2,
+          "minutesPlayed": 80,
+          "competition": "Belgian Pro League"
+        },
+        {
+          "date": "2026-02-04",
+          "opponent": "Sporting Charleroi",
+          "rating": 6.9,
+          "minutesPlayed": 74,
+          "competition": "Cup"
+        }
+      ],
+      "last5AvgRating": 7.3,
+      "lastGameRating": 7.2,
+      "lastGameDate": "2026-02-21",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Union St.Gilloise",
+      "league": "Belgian Pro League",
+      "positionsDetailed": [
+        "ST",
+        "AM"
+      ],
+      "age": 25,
+      "marketValue": "€15.1m",
+      "teamId": 7978,
+      "leagueId": 40
+    },
+    "marcelo-flores": {
+      "playerId": "marcelo-flores",
+      "appearances": 14,
+      "goals": 3,
+      "assists": 0,
+      "seasonAvgRating": 6.7,
+      "last5Games": [
+        {
+          "date": "2026-05-31",
+          "opponent": "Toluca",
+          "rating": 6.6,
+          "minutesPlayed": 15,
+          "competition": "CONCACAF Champions Cup"
+        },
+        {
+          "date": "2026-05-10",
+          "opponent": "Chivas",
+          "rating": 6.5,
+          "minutesPlayed": 10,
+          "competition": "Liga MX Clausura Playoff"
+        },
+        {
+          "date": "2026-05-06",
+          "opponent": "Nashville SC",
+          "rating": 6.8,
+          "minutesPlayed": 45,
+          "competition": "CONCACAF Champions Cup"
+        },
+        {
+          "date": "2026-04-29",
+          "opponent": "Nashville SC",
+          "rating": 7.1,
+          "minutesPlayed": 45,
+          "competition": "CONCACAF Champions Cup"
+        },
+        {
+          "date": "2026-04-25",
+          "opponent": "Mazatlan FC",
+          "rating": 7.5,
+          "minutesPlayed": 56,
+          "competition": "Liga MX Clausura"
+        }
+      ],
+      "last5AvgRating": 6.9,
+      "lastGameRating": 6.6,
+      "lastGameDate": "2026-05-31",
+      "currentSeason": "2025/2026",
+      "injured": true,
+      "club": "Tigres",
+      "league": "Liga MX Clausura",
+      "positionsDetailed": [
+        "LW",
+        "LM",
+        "RW"
+      ],
+      "age": 22,
+      "marketValue": "€1.4m",
+      "teamId": 8561,
+      "leagueId": 230
+    },
+    "ali-ahmed": {
+      "playerId": "ali-ahmed",
+      "appearances": 19,
+      "goals": 4,
+      "assists": 3,
+      "seasonAvgRating": 7.2,
+      "last5Games": [
+        {
+          "date": "2026-05-02",
+          "opponent": "Hull City",
+          "rating": 6.2,
+          "minutesPlayed": 45,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-25",
+          "opponent": "Swansea City",
+          "rating": 6.2,
+          "minutesPlayed": 28,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-18",
+          "opponent": "Bristol City",
+          "rating": 7,
+          "minutesPlayed": 83,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-11",
+          "opponent": "Ipswich Town",
+          "rating": 7.3,
+          "minutesPlayed": 90,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-06",
+          "opponent": "Millwall",
+          "rating": 7.3,
+          "minutesPlayed": 90,
+          "competition": "Championship"
+        }
+      ],
+      "last5AvgRating": 6.8,
+      "lastGameRating": 6.2,
+      "lastGameDate": "2026-05-02",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Norwich City",
+      "league": "Championship",
+      "positionsDetailed": [
+        "LW",
+        "LM",
+        "RW"
+      ],
+      "age": 25,
+      "marketValue": "€2.5m",
+      "teamId": 9850,
+      "leagueId": 48
+    },
+    "liam-millar": {
+      "playerId": "liam-millar",
+      "appearances": 33,
+      "goals": 3,
+      "assists": 5,
+      "seasonAvgRating": 6.9,
+      "last5Games": [
+        {
+          "date": "2026-05-23",
+          "opponent": "Middlesbrough",
+          "rating": 6.6,
+          "minutesPlayed": 63,
+          "competition": "Championship Playoff"
+        },
+        {
+          "date": "2026-05-11",
+          "opponent": "Millwall",
+          "rating": 6.9,
+          "minutesPlayed": 78,
+          "competition": "Championship Playoff"
+        },
+        {
+          "date": "2026-05-08",
+          "opponent": "Millwall",
+          "rating": 6.3,
+          "minutesPlayed": 69,
+          "competition": "Championship Playoff"
+        },
+        {
+          "date": "2026-05-02",
+          "opponent": "Norwich City",
+          "rating": 7.1,
+          "minutesPlayed": 82,
+          "competition": "Championship"
+        },
+        {
+          "date": "2026-04-25",
+          "opponent": "Charlton Athletic",
+          "rating": 6.2,
+          "minutesPlayed": 70,
+          "competition": "Championship"
+        }
+      ],
+      "last5AvgRating": 6.6,
+      "lastGameRating": 6.6,
+      "lastGameDate": "2026-05-23",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Hull City",
+      "league": "Championship",
+      "positionsDetailed": [
+        "LW",
+        "LM",
+        "AM",
+        "LWB",
+        "RM"
+      ],
+      "age": 26,
+      "marketValue": "€1.7m",
+      "teamId": 8667,
+      "leagueId": 48
+    },
+    "ismael-kone": {
+      "playerId": "ismael-kone",
+      "appearances": 35,
+      "goals": 6,
+      "assists": 0,
+      "seasonAvgRating": 6.9,
+      "last5Games": [
+        {
+          "date": "2026-05-24",
+          "opponent": "Parma",
+          "rating": 6.9,
+          "minutesPlayed": 65,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-05-17",
+          "opponent": "Lecce",
+          "rating": 7.4,
+          "minutesPlayed": 72,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-05-08",
+          "opponent": "Torino",
+          "rating": 6.6,
+          "minutesPlayed": 27,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-05-03",
+          "opponent": "Milan",
+          "rating": 6.9,
+          "minutesPlayed": 90,
+          "competition": "Serie A"
+        },
+        {
+          "date": "2026-04-26",
+          "opponent": "Fiorentina",
+          "rating": 6.5,
+          "minutesPlayed": 74,
+          "competition": "Serie A"
+        }
+      ],
+      "last5AvgRating": 6.9,
+      "lastGameRating": 6.9,
+      "lastGameDate": "2026-05-24",
+      "currentSeason": "2025/2026",
+      "injured": true,
+      "club": "Sassuolo",
+      "league": "Serie A",
+      "positionsDetailed": [
+        "CM",
+        "DM"
+      ],
+      "age": 24,
+      "marketValue": "€18.8m",
+      "teamId": 7943,
+      "leagueId": 55
+    },
+    "stephen-eustaquio": {
+      "playerId": "stephen-eustaquio",
+      "appearances": 8,
+      "goals": 0,
+      "assists": 0,
+      "seasonAvgRating": 6.3,
+      "last5Games": [
+        {
+          "date": "2026-05-25",
+          "opponent": "Seattle Sounders FC",
+          "rating": 6.1,
+          "minutesPlayed": 11,
+          "competition": "Major League Soccer"
+        },
+        {
+          "date": "2026-05-18",
+          "opponent": "Nashville SC",
+          "rating": 7.2,
+          "minutesPlayed": 88,
+          "competition": "Major League Soccer"
+        },
+        {
+          "date": "2026-05-14",
+          "opponent": "St. Louis City",
+          "rating": 6.3,
+          "minutesPlayed": 13,
+          "competition": "Major League Soccer"
+        },
+        {
+          "date": "2026-05-11",
+          "opponent": "Houston Dynamo FC",
+          "rating": 5.5,
+          "minutesPlayed": 59,
+          "competition": "Major League Soccer"
+        },
+        {
+          "date": "2026-05-07",
+          "opponent": "Toluca",
+          "rating": 6,
+          "minutesPlayed": 31,
+          "competition": "CONCACAF Champions Cup"
+        }
+      ],
+      "last5AvgRating": 6.2,
+      "lastGameRating": 6.1,
+      "lastGameDate": "2026-05-25",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "FC Porto",
+      "league": "Liga Portugal",
+      "positionsDetailed": [
+        "CM",
+        "DM"
+      ],
+      "age": 29,
+      "marketValue": "€4.6m",
+      "teamId": 9773,
+      "leagueId": 61
+    },
+    "nathan-saliba": {
+      "playerId": "nathan-saliba",
+      "appearances": 34,
+      "goals": 3,
+      "assists": 1,
+      "seasonAvgRating": 6.8,
+      "last5Games": [
+        {
+          "date": "2026-05-24",
+          "opponent": "Union St.Gilloise",
+          "rating": 5.2,
+          "minutesPlayed": 45,
+          "competition": "Belgian Pro League Playoff Championship Group"
+        },
+        {
+          "date": "2026-05-21",
+          "opponent": "St.Truiden",
+          "rating": 7.2,
+          "minutesPlayed": 90,
+          "competition": "Belgian Pro League Playoff Championship Group"
+        },
+        {
+          "date": "2026-05-17",
+          "opponent": "KV Mechelen",
+          "rating": 7.4,
+          "minutesPlayed": 83,
+          "competition": "Belgian Pro League Playoff Championship Group"
+        },
+        {
+          "date": "2026-05-14",
+          "opponent": "Union St.Gilloise",
+          "rating": 7.3,
+          "minutesPlayed": 120,
+          "competition": "Cup"
+        },
+        {
+          "date": "2026-04-26",
+          "opponent": "Union St.Gilloise",
+          "rating": 5.2,
+          "minutesPlayed": 81,
+          "competition": "Belgian Pro League Playoff Championship Group"
+        }
+      ],
+      "last5AvgRating": 6.5,
+      "lastGameRating": 5.2,
+      "lastGameDate": "2026-05-24",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Anderlecht",
+      "league": "Belgian Pro League",
+      "positionsDetailed": [
+        "DM",
+        "CM",
+        "AM",
+        "RW"
+      ],
+      "age": 22,
+      "marketValue": "€5.4m",
+      "teamId": 8635,
+      "leagueId": 40
+    },
+    "niko-sigur": {
+      "playerId": "niko-sigur",
+      "appearances": 29,
+      "goals": 1,
+      "assists": 2,
+      "seasonAvgRating": 7.1,
+      "last5Games": [
+        {
+          "date": "2026-05-09",
+          "opponent": "Dinamo Zagreb",
+          "rating": 6.2,
+          "minutesPlayed": 85,
+          "competition": "HNL"
+        },
+        {
+          "date": "2026-05-03",
+          "opponent": "NK Varazdin",
+          "rating": 7.3,
+          "minutesPlayed": 90,
+          "competition": "HNL"
+        },
+        {
+          "date": "2026-04-26",
+          "opponent": "Rijeka",
+          "rating": 6.7,
+          "minutesPlayed": 90,
+          "competition": "HNL"
+        },
+        {
+          "date": "2026-04-21",
+          "opponent": "Osijek",
+          "rating": 7.5,
+          "minutesPlayed": 90,
+          "competition": "HNL"
+        },
+        {
+          "date": "2026-04-12",
+          "opponent": "HNK Gorica",
+          "rating": 7.9,
+          "minutesPlayed": 90,
+          "competition": "HNL"
+        }
+      ],
+      "last5AvgRating": 7.1,
+      "lastGameRating": 6.2,
+      "lastGameDate": "2026-05-09",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Hajduk Split",
+      "league": "HNL",
+      "positionsDetailed": [
+        "RB",
+        "DM",
+        "CM"
+      ],
+      "age": 22,
+      "marketValue": "€2.5m",
+      "teamId": 10154,
+      "leagueId": 252
+    },
+    "tajon-buchanan": {
+      "playerId": "tajon-buchanan",
+      "appearances": 34,
+      "goals": 7,
+      "assists": 1,
+      "seasonAvgRating": 6.7,
+      "last5Games": [
+        {
+          "date": "2026-05-17",
+          "opponent": "Rayo Vallecano",
+          "rating": 5.5,
+          "minutesPlayed": 45,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-05-13",
+          "opponent": "Sevilla",
+          "rating": 6,
+          "minutesPlayed": 30,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-05-10",
+          "opponent": "Mallorca",
+          "rating": 6.3,
+          "minutesPlayed": 71,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-05-02",
+          "opponent": "Levante",
+          "rating": null,
+          "minutesPlayed": 6,
+          "competition": "LaLiga"
+        },
+        {
+          "date": "2026-04-23",
+          "opponent": "Real Oviedo",
+          "rating": 6.2,
+          "minutesPlayed": 45,
+          "competition": "LaLiga"
+        }
+      ],
+      "last5AvgRating": 6,
+      "lastGameRating": 5.5,
+      "lastGameDate": "2026-05-17",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Villarreal",
+      "league": "LaLiga",
+      "positionsDetailed": [
+        "RM",
+        "LM",
+        "RW",
+        "LW"
+      ],
+      "age": 27,
+      "marketValue": "€11.5m",
+      "teamId": 10205,
+      "leagueId": 87
+    },
+    "alphonso-davies": {
+      "playerId": "alphonso-davies",
+      "appearances": 13,
+      "goals": 1,
+      "assists": 3,
+      "seasonAvgRating": 7.1,
+      "last5Games": [
+        {
+          "date": "2026-05-06",
+          "opponent": "Paris Saint-Germain",
+          "rating": 7.7,
+          "minutesPlayed": 23,
+          "competition": "Champions League"
+        },
+        {
+          "date": "2026-05-02",
+          "opponent": "FC Heidenheim",
+          "rating": 7,
+          "minutesPlayed": 13,
+          "competition": "Bundesliga"
+        },
+        {
+          "date": "2026-04-28",
+          "opponent": "Paris Saint-Germain",
+          "rating": 6.1,
+          "minutesPlayed": 45,
+          "competition": "Champions League"
+        },
+        {
+          "date": "2026-04-25",
+          "opponent": "Mainz 05",
+          "rating": 6.3,
+          "minutesPlayed": 57,
+          "competition": "Bundesliga"
+        },
+        {
+          "date": "2026-04-22",
+          "opponent": "Bayer Leverkusen",
+          "rating": 6.3,
+          "minutesPlayed": 16,
+          "competition": "DFB Pokal"
+        }
+      ],
+      "last5AvgRating": 6.7,
+      "lastGameRating": 7.7,
+      "lastGameDate": "2026-05-06",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Bayern München",
+      "league": "Bundesliga",
+      "positionsDetailed": [
+        "LB",
+        "RB"
+      ],
+      "age": 25,
+      "marketValue": "€40.7m",
+      "teamId": 9823,
+      "leagueId": 54
+    },
+    "moise-bombito": {
+      "playerId": "moise-bombito",
+      "appearances": 2,
+      "goals": 0,
+      "assists": 0,
+      "seasonAvgRating": 6.7,
+      "last5Games": [
+        {
+          "date": "2025-10-05",
+          "opponent": "Monaco",
+          "rating": 6.3,
+          "minutesPlayed": 56,
+          "competition": "Ligue 1"
+        },
+        {
+          "date": "2025-09-28",
+          "opponent": "Paris FC",
+          "rating": 7.2,
+          "minutesPlayed": 90,
+          "competition": "Ligue 1"
+        }
+      ],
+      "last5AvgRating": 6.8,
+      "lastGameRating": 6.3,
+      "lastGameDate": "2025-10-05",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Nice",
+      "league": "Ligue 1",
+      "positionsDetailed": [
+        "CB"
+      ],
+      "age": 26,
+      "marketValue": "€1.4m",
+      "teamId": 9831,
+      "leagueId": 53
+    },
+    "derek-cornelius": {
+      "playerId": "derek-cornelius",
+      "appearances": 2,
+      "goals": 0,
+      "assists": 0,
+      "seasonAvgRating": 6.3,
+      "last5Games": [
+        {
+          "date": "2025-11-09",
+          "opponent": "Dundee FC",
+          "rating": 7.8,
+          "minutesPlayed": 82,
+          "competition": "Premiership"
+        },
+        {
+          "date": "2025-11-02",
+          "opponent": "Celtic",
+          "rating": null,
+          "minutesPlayed": 120,
+          "competition": "League Cup"
+        },
+        {
+          "date": "2025-10-29",
+          "opponent": "Hibernian",
+          "rating": 7.1,
+          "minutesPlayed": 89,
+          "competition": "Premiership"
+        },
+        {
+          "date": "2025-10-26",
+          "opponent": "Kilmarnock",
+          "rating": 8.4,
+          "minutesPlayed": 90,
+          "competition": "Premiership"
+        },
+        {
+          "date": "2025-10-23",
+          "opponent": "Brann",
+          "rating": 6.2,
+          "minutesPlayed": 14,
+          "competition": "Europa League"
+        }
+      ],
+      "last5AvgRating": 7.4,
+      "lastGameRating": 7.8,
+      "lastGameDate": "2025-11-09",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Marseille",
+      "league": "Ligue 1",
+      "positionsDetailed": [
+        "CB",
+        "LB"
+      ],
+      "age": 28,
+      "marketValue": "€2.3m",
+      "teamId": 8592,
+      "leagueId": 53
+    },
+    "luc-de-fougerolles": {
+      "playerId": "luc-de-fougerolles",
+      "appearances": 27,
+      "goals": 0,
+      "assists": 1,
+      "seasonAvgRating": 6.6,
+      "last5Games": [
+        {
+          "date": "2026-05-17",
+          "opponent": "Lommel",
+          "rating": null,
+          "minutesPlayed": 62,
+          "competition": "Belgian Pro League Qualification"
+        },
+        {
+          "date": "2026-05-09",
+          "opponent": "Zulte Waregem",
+          "rating": 6.6,
+          "minutesPlayed": 60,
+          "competition": "Belgian Pro League Playoff Relegation Group"
+        },
+        {
+          "date": "2026-05-03",
+          "opponent": "RAAL La Louviere",
+          "rating": 6.6,
+          "minutesPlayed": 60,
+          "competition": "Belgian Pro League Playoff Relegation Group"
+        },
+        {
+          "date": "2026-04-24",
+          "opponent": "Cercle Brugge",
+          "rating": 6.4,
+          "minutesPlayed": 45,
+          "competition": "Belgian Pro League Playoff Relegation Group"
+        },
+        {
+          "date": "2026-04-19",
+          "opponent": "Cercle Brugge",
+          "rating": 6.3,
+          "minutesPlayed": 30,
+          "competition": "Belgian Pro League Playoff Relegation Group"
+        }
+      ],
+      "last5AvgRating": 6.5,
+      "lastGameRating": null,
+      "lastGameDate": "2026-05-17",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Fulham U21",
+      "league": "Belgian Pro League",
+      "positionsDetailed": [
+        "CB"
+      ],
+      "age": 20,
+      "marketValue": "€1.4m",
+      "teamId": 860801,
+      "leagueId": 40
+    },
+    "alistair-johnston": {
+      "playerId": "alistair-johnston",
+      "appearances": 7,
+      "goals": 0,
+      "assists": 1,
+      "seasonAvgRating": 7.5,
+      "last5Games": [
+        {
+          "date": "2026-05-23",
+          "opponent": "Dunfermline Athletic",
+          "rating": null,
+          "minutesPlayed": 90,
+          "competition": "FA Cup"
+        },
+        {
+          "date": "2026-05-16",
+          "opponent": "Hearts",
+          "rating": 7.8,
+          "minutesPlayed": 90,
+          "competition": "Premiership Championship Group"
+        },
+        {
+          "date": "2026-05-13",
+          "opponent": "Motherwell",
+          "rating": 7.3,
+          "minutesPlayed": 70,
+          "competition": "Premiership Championship Group"
+        },
+        {
+          "date": "2026-05-10",
+          "opponent": "Rangers",
+          "rating": 6.8,
+          "minutesPlayed": 81,
+          "competition": "Premiership Championship Group"
+        },
+        {
+          "date": "2026-05-03",
+          "opponent": "Hibernian",
+          "rating": 7.9,
+          "minutesPlayed": 64,
+          "competition": "Premiership Championship Group"
+        }
+      ],
+      "last5AvgRating": 7.5,
+      "lastGameRating": null,
+      "lastGameDate": "2026-05-23",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Celtic",
+      "league": "Premiership",
+      "positionsDetailed": [
+        "RB"
+      ],
+      "age": 27,
+      "marketValue": "€7m",
+      "teamId": 9925,
+      "leagueId": 64
+    },
+    "owen-goodman": {
+      "playerId": "owen-goodman",
+      "appearances": 32,
+      "goals": 0,
+      "assists": 0,
+      "seasonAvgRating": 6.8,
+      "last5Games": [
+        {
+          "date": "2026-04-25",
+          "opponent": "Luton Town",
+          "rating": 7,
+          "minutesPlayed": 90,
+          "competition": "League One"
+        },
+        {
+          "date": "2026-04-21",
+          "opponent": "Stevenage",
+          "rating": 8.1,
+          "minutesPlayed": 90,
+          "competition": "League One"
+        },
+        {
+          "date": "2026-04-18",
+          "opponent": "Bradford City",
+          "rating": 7.9,
+          "minutesPlayed": 90,
+          "competition": "League One"
+        },
+        {
+          "date": "2026-04-14",
+          "opponent": "Port Vale",
+          "rating": 7.6,
+          "minutesPlayed": 90,
+          "competition": "League One"
+        },
+        {
+          "date": "2026-04-11",
+          "opponent": "Rotherham United",
+          "rating": 7.2,
+          "minutesPlayed": 90,
+          "competition": "League One"
+        }
+      ],
+      "last5AvgRating": 7.6,
+      "lastGameRating": 7,
+      "lastGameDate": "2026-04-25",
+      "currentSeason": "2025/2026",
+      "injured": false,
+      "club": "Crystal Palace U18",
+      "league": "League One",
+      "positionsDetailed": [
+        "GK"
+      ],
+      "age": 22,
+      "marketValue": "€666.2k",
+      "teamId": 1183385,
+      "leagueId": 108
+    }
+  },
+  "rumours": {
+    "jonathan-david": [],
+    "cyle-larin": [],
+    "tani-oluwaseyi": [],
+    "promise-david": [],
+    "marcelo-flores": [],
+    "ali-ahmed": [],
+    "liam-millar": [],
+    "ismael-kone": [],
+    "stephen-eustaquio": [],
+    "nathan-saliba": [],
+    "niko-sigur": [
+      {
+        "id": "rumour-1783377261606-nlv5d",
+        "playerId": "niko-sigur",
+        "headline": "Linked with move to Wolverhampton Wanderers for £2.5m",
+        "source": "Manual",
+        "date": "2026-07-06",
+        "isManual": true,
+        "targetClub": "Wolverhampton Wanderers",
+        "targetClubId": 8602,
+        "feeOriginal": "£2.5m",
+        "feeAmount": 2.95,
+        "currency": "GBP"
+      }
+    ],
+    "tajon-buchanan": [],
+    "alphonso-davies": [],
+    "moise-bombito": [],
+    "derek-cornelius": [
+      {
+        "id": "rumour-1783377405078-xvn5c",
+        "playerId": "derek-cornelius",
+        "headline": "Linked with move to Genoa for €3.5m",
+        "source": "Manual",
+        "date": "2026-07-06",
+        "isManual": true,
+        "targetClub": "Genoa",
+        "targetClubId": 10233,
+        "feeOriginal": "€3.5m",
+        "feeAmount": 3.5,
+        "currency": "EUR"
+      }
+    ],
+    "luc-de-fougerolles": [],
+    "alistair-johnston": [],
+    "owen-goodman": []
+  }
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "jonathan-david",
+    "name": "Jonathan David",
+    "positions": [
+      "ST",
+      "SS"
+    ],
+    "club": "Juventus",
+    "league": "Serie A",
+    "fotmob_id": 939569
+  },
+  {
+    "id": "cyle-larin",
+    "name": "Cyle Larin",
+    "positions": [
+      "ST",
+      "LW"
+    ],
+    "club": "Southampton",
+    "league": "Championship",
+    "fotmob_id": 544312
+  },
+  {
+    "id": "tani-oluwaseyi",
+    "name": "Tani Oluwaseyi",
+    "positions": [
+      "ST"
+    ],
+    "club": "Villarreal",
+    "league": "LaLiga",
+    "fotmob_id": 1338740
+  },
+  {
+    "id": "promise-david",
+    "name": "Promise David",
+    "positions": [
+      "ST"
+    ],
+    "club": "Union St.Gilloise",
+    "league": "Belgian Pro League",
+    "fotmob_id": 1252132
+  },
+  {
+    "id": "marcelo-flores",
+    "name": "Marcelo Flores",
+    "positions": [
+      "CAM",
+      "LM",
+      "RM"
+    ],
+    "club": "Tigres",
+    "league": "Liga MX Clausura",
+    "fotmob_id": 1186513
+  },
+  {
+    "id": "ali-ahmed",
+    "name": "Ali Ahmed",
+    "positions": [
+      "LM",
+      "RM",
+      "CM"
+    ],
+    "club": "Norwich City",
+    "league": "Championship",
+    "fotmob_id": 1359536
+  },
+  {
+    "id": "liam-millar",
+    "name": "Liam Millar",
+    "positions": [
+      "LM",
+      "LW"
+    ],
+    "club": "Hull City",
+    "league": "Championship",
+    "fotmob_id": 932308
+  },
+  {
+    "id": "ismael-kone",
+    "name": "Ismaël Koné",
+    "positions": [
+      "CM",
+      "DM",
+      "CAM"
+    ],
+    "club": "Sassuolo",
+    "league": "Serie A",
+    "fotmob_id": 1288119
+  },
+  {
+    "id": "stephen-eustaquio",
+    "name": "Stephen Eustáquio",
+    "positions": [
+      "CM",
+      "DM"
+    ],
+    "club": "FC Porto",
+    "league": "Liga Portugal",
+    "fotmob_id": 816223
+  },
+  {
+    "id": "nathan-saliba",
+    "name": "Nathan Saliba",
+    "positions": [
+      "CM",
+      "DM"
+    ],
+    "club": "Anderlecht",
+    "league": "Belgian Pro League",
+    "fotmob_id": 1216798
+  },
+  {
+    "id": "niko-sigur",
+    "name": "Niko Sigur",
+    "positions": [
+      "RB",
+      "DM",
+      "CM"
+    ],
+    "club": "Hajduk Split",
+    "league": "HNL",
+    "fotmob_id": 1494508
+  },
+  {
+    "id": "tajon-buchanan",
+    "name": "Tajon Buchanan",
+    "positions": [
+      "RM",
+      "LM",
+      "RB"
+    ],
+    "club": "Villarreal",
+    "league": "LaLiga",
+    "fotmob_id": 1026135
+  },
+  {
+    "id": "alphonso-davies",
+    "name": "Alphonso Davies",
+    "positions": [
+      "LB",
+      "LM",
+      "LW"
+    ],
+    "club": "Bayern München",
+    "league": "Bundesliga",
+    "fotmob_id": 751202
+  },
+  {
+    "id": "moise-bombito",
+    "name": "Moïse Bombito",
+    "positions": [
+      "CB"
+    ],
+    "club": "Nice",
+    "league": "Ligue 1",
+    "fotmob_id": 1440009
+  },
+  {
+    "id": "derek-cornelius",
+    "name": "Derek Cornelius",
+    "positions": [
+      "CB"
+    ],
+    "club": "Marseille",
+    "league": "Ligue 1",
+    "fotmob_id": 847629
+  },
+  {
+    "id": "luc-de-fougerolles",
+    "name": "Luc de Fougerolles",
+    "positions": [
+      "CB",
+      "RB",
+      "LB"
+    ],
+    "club": "Fulham U21",
+    "league": "Belgian Pro League",
+    "fotmob_id": 1399943
+  },
+  {
+    "id": "alistair-johnston",
+    "name": "Alistair Johnston",
+    "positions": [
+      "RB",
+      "CB"
+    ],
+    "club": "Celtic",
+    "league": "Premiership",
+    "fotmob_id": 1055426
+  },
+  {
+    "id": "owen-goodman",
+    "name": "Owen Goodman",
+    "positions": [
+      "GK"
+    ],
+    "club": "Crystal Palace U18",
+    "league": "League One",
+    "fotmob_id": 1415372
+  }
+]
