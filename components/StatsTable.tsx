@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Player, PlayerStats, TransferRumour } from '@/lib/types';
 import { getRatingClass, getRatingColor, getRatingBarHeight, formatDate } from './utils';
+import leagueRankings from '../data/league-rankings.json';
 
 type SortKey = 'name' | 'position' | 'club' | 'league' | 'appearances' | 'goals' | 'assists' | 'last5Avg' | 'seasonAvg' | 'lastGame' | 'age' | 'value';
 type SortDir = 'asc' | 'desc';
@@ -60,7 +61,7 @@ export default function StatsTable({
       LDM: 6, DM: 6, RDM: 6,
       LCM: 7, CM: 7, RCM: 7,
       LM: 8, RM: 8,
-      LAM: 10, CAM: 10, RAM: 10,
+      AM: 9, LAM: 9, CAM: 9, RAM: 9,
       LW: 11, RW: 11,
       LS: 13, ST: 13, RS: 13, SS: 13, CF: 13,
     };
@@ -78,7 +79,13 @@ export default function StatsTable({
         case 'name': av = a.name; bv = b.name; break;
         case 'position': av = posOrder[aPos] ?? 99; bv = posOrder[bPos] ?? 99; break;
         case 'club': av = sa?.club ?? a.club; bv = sb?.club ?? b.club; break;
-        case 'league': av = sa?.league ?? a.league; bv = sb?.league ?? b.league; break;
+        case 'league': {
+          const rankA = (leagueRankings as Record<string, number>)[sa?.league ?? a.league] ?? 999;
+          const rankB = (leagueRankings as Record<string, number>)[sb?.league ?? b.league] ?? 999;
+          av = rankA;
+          bv = rankB;
+          break;
+        }
         case 'appearances': av = sa?.appearances ?? -1; bv = sb?.appearances ?? -1; break;
         case 'goals': av = sa?.goals ?? -1; bv = sb?.goals ?? -1; break;
         case 'assists': av = sa?.assists ?? -1; bv = sb?.assists ?? -1; break;
