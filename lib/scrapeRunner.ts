@@ -50,7 +50,7 @@ export async function runScrape(): Promise<boolean> {
 
     console.log(`[Scraper] Starting optimized parallel FotMob sync for ${players.length} players...`);
 
-    const CHUNK_SIZE = 5;
+    const CHUNK_SIZE = 8;
     for (let i = 0; i < players.length; i += CHUNK_SIZE) {
       const chunk = players.slice(i, i + CHUNK_SIZE);
       console.log(`[Scraper] Syncing chunk ${Math.floor(i / CHUNK_SIZE) + 1}/${Math.ceil(players.length / CHUNK_SIZE)}`);
@@ -90,8 +90,12 @@ export async function runScrape(): Promise<boolean> {
       }
     }
 
-    // Save updated roster configuration
-    fs.writeFileSync(PLAYERS_FILE, JSON.stringify(players, null, 2), 'utf-8');
+    // Save updated roster configuration (fails silently on read-only environments like Vercel)
+    try {
+      fs.writeFileSync(PLAYERS_FILE, JSON.stringify(players, null, 2), 'utf-8');
+    } catch (err: any) {
+      console.warn('[Scraper] Failed to save updated players config (running in memory fallback):', err.message);
+    }
 
     // Update stats cache
     cache.players = newPlayersStats;
