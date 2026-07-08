@@ -60,6 +60,7 @@ export interface TransferRumour {
   isManual: boolean;
   targetClub?: string;
   targetClubId?: number;
+  targetClubLogo?: string;
   feeOriginal?: string;
   feeAmount?: number;
   currency?: string;

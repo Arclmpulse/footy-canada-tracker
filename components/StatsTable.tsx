@@ -156,9 +156,9 @@ export default function StatsTable({
             const teamLogo = teamLogoUrl(s?.teamId);
             const leagueLogo = leagueLogoUrl(s?.leagueId);
 
-            const playerManualRumours = (rumours[player.id] ?? []).filter(r => r.isManual);
-            const displayRumours: TransferRumour[] = playerManualRumours.length > 0
-              ? playerManualRumours
+            const playerRumours = rumours[player.id] ?? [];
+            const displayRumours: TransferRumour[] = playerRumours.length > 0
+              ? playerRumours
               : s?.rumour
                 ? [{ id: 'auto-' + player.id, playerId: player.id, headline: s.rumour, source: 'FotMob', date: s.lastGameDate || '', isManual: false } as TransferRumour]
                 : [];
@@ -346,7 +346,16 @@ function RumoursCell({
     <div className="rumours-cell-container" style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%', minWidth: 160 }}>
       {rumours.map(r => (
         <div key={r.id} className="rumour-item" style={{ display: 'flex', alignItems: 'flex-start', gap: 6, background: r.isManual ? 'rgba(255,255,255,0.03)' : undefined, padding: r.isManual ? '4px 6px' : '0 6px', borderRadius: 4 }}>
-          {r.targetClubId && (
+          {r.targetClubLogo ? (
+            <img
+              src={r.targetClubLogo}
+              alt=""
+              width={14}
+              height={14}
+              style={{ objectFit: 'contain', marginTop: 2, flexShrink: 0 }}
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          ) : r.targetClubId ? (
             <img
               src={`https://images.fotmob.com/image_resources/logo/teamlogo/${r.targetClubId}.png`}
               alt=""
@@ -355,7 +364,7 @@ function RumoursCell({
               style={{ objectFit: 'contain', marginTop: 2, flexShrink: 0 }}
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
-          )}
+          ) : null}
           <div style={{ flex: 1, minWidth: 0, fontSize: 11 }}>
             {r.isManual && <span className="rumour-manual-badge" style={{ marginRight: 4, background: 'rgba(213,43,30,0.15)', color: '#ff6b6b', padding: '0px 3px', borderRadius: 2, fontSize: 9, fontWeight: 'bold' }}>Manual</span>}
             <span className="rumour-text" title={r.headline} style={{ color: 'var(--text-primary)', wordBreak: 'break-word', display: 'block', lineHeight: '1.2' }}>{r.headline}</span>

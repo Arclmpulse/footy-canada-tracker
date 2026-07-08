@@ -2027,7 +2027,18 @@
     }
   },
   "rumours": {
-    "jonathan-david": [],
+    "jonathan-david": [
+      {
+        "id": "tm-jonathan-david-olympique-lyon-2026-06-22",
+        "playerId": "jonathan-david",
+        "headline": "Rumoured interest from Olympique Lyon (Valued: €30.00m)",
+        "date": "2026-06-22",
+        "source": "Transfermarkt",
+        "isManual": false,
+        "targetClub": "Olympique Lyon",
+        "targetClubLogo": "https://tmssl.akamaized.net//images/wappen/tiny/1041.png?lm=1656668172"
+      }
+    ],
     "cyle-larin": [],
     "tani-oluwaseyi": [],
     "promise-david": [],
@@ -2036,20 +2047,28 @@
     "liam-millar": [],
     "ismael-kone": [],
     "stephen-eustaquio": [],
-    "nathan-saliba": [],
+    "nathan-saliba": [
+      {
+        "id": "tm-nathan-saliba-sc-freiburg-2026-05-17",
+        "playerId": "nathan-saliba",
+        "headline": "Rumoured interest from SC Freiburg (Valued: €7.50m) [Probability: 34 %]",
+        "date": "2026-05-17",
+        "source": "Transfermarkt",
+        "isManual": false,
+        "targetClub": "SC Freiburg",
+        "targetClubLogo": "https://tmssl.akamaized.net//images/wappen/tiny/60.png?lm=1517249279"
+      }
+    ],
     "niko-sigur": [
       {
-        "id": "rumour-1783377261606-nlv5d",
+        "id": "tm-niko-sigur-wolverhampton-wanderers-2026-07-06",
         "playerId": "niko-sigur",
-        "headline": "Linked with move to Wolverhampton Wanderers for £2.5m",
-        "source": "Manual",
+        "headline": "Rumoured interest from Wolverhampton Wanderers (Valued: €4.00m)",
         "date": "2026-07-06",
-        "isManual": true,
+        "source": "Transfermarkt",
+        "isManual": false,
         "targetClub": "Wolverhampton Wanderers",
-        "targetClubId": 8602,
-        "feeOriginal": "£2.5m",
-        "feeAmount": 2.95,
-        "currency": "GBP"
+        "targetClubLogo": "https://tmssl.akamaized.net//images/wappen/tiny/543.png?lm=1467496784"
       }
     ],
     "tajon-buchanan": [],
@@ -2057,17 +2076,14 @@
     "moise-bombito": [],
     "derek-cornelius": [
       {
-        "id": "rumour-1783377405078-xvn5c",
+        "id": "tm-derek-cornelius-genoa-cfc-2026-07-03",
         "playerId": "derek-cornelius",
-        "headline": "Linked with move to Genoa for €3.5m",
-        "source": "Manual",
-        "date": "2026-07-06",
-        "isManual": true,
-        "targetClub": "Genoa",
-        "targetClubId": 10233,
-        "feeOriginal": "€3.5m",
-        "feeAmount": 3.5,
-        "currency": "EUR"
+        "headline": "Rumoured interest from Genoa CFC (Valued: €2.50m)",
+        "date": "2026-07-03",
+        "source": "Transfermarkt",
+        "isManual": false,
+        "targetClub": "Genoa CFC",
+        "targetClubLogo": "https://tmssl.akamaized.net//images/wappen/tiny/252.png?lm=1655305880"
       }
     ],
     "luc-de-fougerolles": [],

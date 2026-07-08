@@ -7,6 +7,7 @@ interface RumourModalProps {
   playerName: string;
   existingRumours: TransferRumour[];
   onSave: (data: {
+    id?: string;
     headline: string;
     source: string;
     targetClub?: string;
@@ -33,6 +34,7 @@ export default function RumourModal({
   const [currency, setCurrency] = useState('EUR');
   const [resolvedTeam, setResolvedTeam] = useState<{ id: number; name: string } | null>(null);
   const [searching, setSearching] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Close on Escape key press
   useEffect(() => {
@@ -70,6 +72,36 @@ export default function RumourModal({
     return () => clearTimeout(timer);
   }, [targetClubInput]);
 
+  const handleStartEdit = (r: TransferRumour) => {
+    setEditingId(r.id);
+    setHeadline(r.headline);
+    setSource(r.source);
+    setTargetClubInput(r.targetClub || '');
+    if (r.targetClubId) {
+      setResolvedTeam({ id: r.targetClubId, name: r.targetClub || '' });
+    } else {
+      setResolvedTeam(null);
+    }
+    if (r.feeOriginal) {
+      const match = r.feeOriginal.match(/[\d.]+/);
+      setFeeInput(match ? match[0] : '');
+      if (r.feeOriginal.startsWith('£')) setCurrency('GBP');
+      else if (r.feeOriginal.startsWith('$')) setCurrency('USD');
+      else setCurrency('EUR');
+    } else {
+      setFeeInput('');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setHeadline('');
+    setSource('');
+    setTargetClubInput('');
+    setFeeInput('');
+    setResolvedTeam(null);
+  };
+
   const handleSave = () => {
     // We require either a headline OR a target club to save
     if (!headline.trim() && !targetClubInput.trim()) return;
@@ -81,9 +113,6 @@ export default function RumourModal({
     if (feeInput.trim()) {
       const feeNum = parseFloat(feeInput);
       if (!isNaN(feeNum)) {
-        // Exchange rates (fixed fallback)
-        // 1 GBP = 1.18 EUR
-        // 1 USD = 0.92 EUR
         let rate = 1.0;
         let symbol = '€';
         if (currency === 'GBP') {
@@ -99,7 +128,6 @@ export default function RumourModal({
       }
     }
 
-    // Default headline generation if left blank
     let finalHeadline = headline.trim();
     if (!finalHeadline && targetClubInput.trim()) {
       const clubName = resolvedTeam?.name || targetClubInput.trim();
@@ -111,6 +139,7 @@ export default function RumourModal({
     }
 
     onSave({
+      id: editingId || undefined,
       headline: finalHeadline,
       source: source.trim() || 'Manual',
       targetClub: resolvedTeam?.name || targetClubInput.trim() || undefined,
@@ -119,13 +148,15 @@ export default function RumourModal({
       feeAmount,
       currency: currency || undefined,
     });
+
+    handleCancelEdit();
   };
 
   const handleOverlay = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
 
-  const manualRumours = existingRumours.filter(r => r.isManual);
+  const activeRumours = existingRumours;
 
   return (
     <div className="modal-overlay" onClick={handleOverlay}>
@@ -139,39 +170,62 @@ export default function RumourModal({
         </p>
 
         {/* Existing Rumours List */}
-        {manualRumours.length > 0 && (
+        {activeRumours.length > 0 && (
           <div style={{ marginBottom: 20 }}>
-            <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 0.5 }}>Active Manual Rumours</h4>
+            <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 0.5 }}>Active Rumours</h4>
             <div className="existing-rumours-list" style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 120, overflowY: 'auto', background: 'rgba(0,0,0,0.2)', padding: 8, borderRadius: 6 }}>
-              {manualRumours.map(r => (
+              {activeRumours.map(r => (
                 <div key={r.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '4px 6px', background: 'var(--bg-elevated)', borderRadius: 4, fontSize: 11.5 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>
-                    {r.targetClubId && (
+                    {r.targetClubLogo ? (
+                      <img
+                        src={r.targetClubLogo}
+                        alt=""
+                        width={14}
+                        height={14}
+                        style={{ objectFit: 'contain' }}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : r.targetClubId ? (
                       <img
                         src={`https://images.fotmob.com/image_resources/logo/teamlogo/${r.targetClubId}.png`}
                         alt=""
                         width={14}
                         height={14}
                         style={{ objectFit: 'contain' }}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
-                    )}
+                    ) : null}
                     <span style={{ color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.headline}</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: 10 }}>({r.source})</span>
                   </div>
-                  <button
-                    onClick={() => onDeleteRumour(r.id)}
-                    style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontSize: 12, fontWeight: 'bold', padding: '2px 4px' }}
-                    title="Delete rumour"
-                  >
-                    ×
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {r.isManual && (
+                      <button
+                        onClick={() => handleStartEdit(r)}
+                        style={{ background: 'none', border: 'none', color: '#ffb300', cursor: 'pointer', fontSize: 11, padding: '2px 4px' }}
+                        title="Edit rumour"
+                      >
+                        ✏️
+                      </button>
+                    )}
+                    <button
+                      onClick={() => onDeleteRumour(r.id)}
+                      style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontSize: 12, fontWeight: 'bold', padding: '2px 4px' }}
+                      title="Delete rumour"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 0.5 }}>Add New Rumour</h4>
+        <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8, letterSpacing: 0.5 }}>
+          {editingId ? 'Edit Rumour' : 'Add New Rumour'}
+        </h4>
         
         {/* Form Group: Target Club Autocomplete */}
         <div style={{ marginBottom: 12, position: 'relative' }}>
@@ -265,13 +319,17 @@ export default function RumourModal({
         </div>
 
         <div className="modal-actions" style={{ marginTop: 0 }}>
-          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+          {editingId ? (
+            <button className="btn btn-ghost" onClick={handleCancelEdit}>Cancel Edit</button>
+          ) : (
+            <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+          )}
           <button
             className="btn btn-primary"
             onClick={handleSave}
             disabled={!headline.trim() && !targetClubInput.trim()}
           >
-            Save Rumour
+            {editingId ? 'Update Rumour' : 'Save Rumour'}
           </button>
         </div>
       </div>

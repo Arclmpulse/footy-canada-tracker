@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const [lineup, setLineup] = useState<LineupState>(DEFAULT_LINEUP);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshingRumours, setRefreshingRumours] = useState(false);
   const [rumourdModal, setRumourModal] = useState<{ playerId: string; playerName: string } | null>(null);
   const [activeLeagues, setActiveLeagues] = useState<Set<string>>(new Set());
   const [showLeagueFilter, setShowLeagueFilter] = useState(false);
@@ -231,6 +232,25 @@ export default function DashboardPage() {
     }
   };
 
+  // ──── Refresh Transfermarkt Rumours by triggering scraper ────────────────────────────
+  const handleRefreshRumours = async () => {
+    setRefreshingRumours(true);
+    try {
+      const res = await fetch('/api/scrape-tm');
+      const data = await res.json();
+      if (data.ok) {
+        await fetchData();
+      } else {
+        alert(data.error || 'Transfermarkt sync failed');
+      }
+    } catch (err) {
+      console.error('[Dashboard] Scrape TM error:', err);
+      alert('An error occurred while updating rumours.');
+    } finally {
+      setRefreshingRumours(false);
+    }
+  };
+
   // ──── Manual Rumour Handlers ────────────────────────────
   const handleAddRumour = (playerId: string) => {
     const player = players.find(p => p.id === playerId);
@@ -239,6 +259,7 @@ export default function DashboardPage() {
   };
 
   const handleSaveRumour = async (rumourData: {
+    id?: string;
     headline: string;
     source: string;
     targetClub?: string;
@@ -250,39 +271,77 @@ export default function DashboardPage() {
     if (!rumourdModal) return;
     const { playerId } = rumourdModal;
 
-    const newRumour: TransferRumour = {
-      id: 'rumour-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      playerId,
-      headline: rumourData.headline || '',
-      source: rumourData.source || 'Manual',
-      date: new Date().toISOString().split('T')[0],
-      isManual: true,
-      targetClub: rumourData.targetClub || undefined,
-      targetClubId: rumourData.targetClubId ? parseInt(rumourData.targetClubId as any, 10) : undefined,
-      feeOriginal: rumourData.feeOriginal || undefined,
-      feeAmount: rumourData.feeAmount ? parseFloat(rumourData.feeAmount as any) : undefined,
-      currency: rumourData.currency || undefined,
-    };
-
-    // 1. Save client-side (local storage)
-    const nextManual = {
-      ...manualRumours,
-      [playerId]: [newRumour, ...(manualRumours[playerId] ?? [])],
-    };
-    setManualRumours(nextManual);
-    try {
-      localStorage.setItem('canada-tracker-manual-rumours', JSON.stringify(nextManual));
-    } catch { }
-
-    // 2. Attempt POST to API (fails silently in read-only hosting)
-    try {
-      await fetch('/api/rumours', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playerId, ...rumourData }),
+    if (rumourData.id) {
+      // 1. Edit client-side (local storage)
+      const currentList = manualRumours[playerId] ?? [];
+      const nextList = currentList.map(r => {
+        if (r.id === rumourData.id) {
+          return {
+            ...r,
+            headline: rumourData.headline || '',
+            source: rumourData.source || 'Manual',
+            targetClub: rumourData.targetClub || undefined,
+            targetClubId: rumourData.targetClubId ? parseInt(rumourData.targetClubId as any, 10) : undefined,
+            feeOriginal: rumourData.feeOriginal || undefined,
+            feeAmount: rumourData.feeAmount ? parseFloat(rumourData.feeAmount as any) : undefined,
+            currency: rumourData.currency || undefined,
+          };
+        }
+        return r;
       });
-    } catch (err) {
-      console.warn('API save failed (likely read-only hosting like Vercel). Using client-side storage.', err);
+      const nextManual = {
+        ...manualRumours,
+        [playerId]: nextList,
+      };
+      setManualRumours(nextManual);
+      try {
+        localStorage.setItem('canada-tracker-manual-rumours', JSON.stringify(nextManual));
+      } catch { }
+
+      // 2. Attempt POST edit to API (fails silently in read-only hosting)
+      try {
+        await fetch('/api/rumours', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerId, id: rumourData.id, ...rumourData }),
+        });
+      } catch (err) {
+        console.warn('API update failed (likely read-only hosting like Vercel). Using client-side storage.', err);
+      }
+    } else {
+      // Adding new!
+      const newRumour: TransferRumour = {
+        id: 'rumour-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+        playerId,
+        headline: rumourData.headline || '',
+        source: rumourData.source || 'Manual',
+        date: new Date().toISOString().split('T')[0],
+        isManual: true,
+        targetClub: rumourData.targetClub || undefined,
+        targetClubId: rumourData.targetClubId ? parseInt(rumourData.targetClubId as any, 10) : undefined,
+        feeOriginal: rumourData.feeOriginal || undefined,
+        feeAmount: rumourData.feeAmount ? parseFloat(rumourData.feeAmount as any) : undefined,
+        currency: rumourData.currency || undefined,
+      };
+
+      const nextManual = {
+        ...manualRumours,
+        [playerId]: [newRumour, ...(manualRumours[playerId] ?? [])],
+      };
+      setManualRumours(nextManual);
+      try {
+        localStorage.setItem('canada-tracker-manual-rumours', JSON.stringify(nextManual));
+      } catch { }
+
+      try {
+        await fetch('/api/rumours', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerId, ...rumourData }),
+        });
+      } catch (err) {
+        console.warn('API save failed (likely read-only hosting like Vercel). Using client-side storage.', err);
+      }
     }
 
     setRumourModal(null);
@@ -390,6 +449,25 @@ export default function DashboardPage() {
             Leagues
           </button>
           <button
+            className="btn btn-secondary"
+            onClick={handleRefreshRumours}
+            disabled={refreshingRumours || loading}
+            title="Scrape latest transfer rumours automatically from Transfermarkt"
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            {refreshingRumours ? (
+              <>
+                <span className="spinner" />
+                Syncing TM…
+              </>
+            ) : (
+              <>
+                <span className="btn-icon">📰</span>
+                Sync TM Rumours
+              </>
+            )}
+          </button>
+          <button
             className="btn btn-primary"
             onClick={handleRefreshStats}
             disabled={refreshing || loading}
@@ -460,7 +538,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v1.2.1 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v2.0 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}

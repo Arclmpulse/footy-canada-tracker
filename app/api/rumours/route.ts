@@ -6,6 +6,7 @@ import { TransferRumour } from '@/lib/types';
 export async function POST(req: NextRequest) {
   try {
     const {
+      id,
       playerId,
       headline,
       source,
@@ -28,6 +29,27 @@ export async function POST(req: NextRequest) {
       cache.rumours[playerId] = [];
     }
 
+    if (id) {
+      // Find and update existing manual rumour in backend cache
+      cache.rumours[playerId] = (cache.rumours[playerId] ?? []).map(r => {
+        if (r.id === id) {
+          return {
+            ...r,
+            headline: headline || '',
+            source: source || 'Manual',
+            targetClub: targetClub || undefined,
+            targetClubId: targetClubId ? parseInt(targetClubId as any, 10) : undefined,
+            feeOriginal: feeOriginal || undefined,
+            feeAmount: feeAmount ? parseFloat(feeAmount as any) : undefined,
+            currency: currency || undefined,
+          };
+        }
+        return r;
+      });
+      saveCache(cache);
+      return NextResponse.json({ ok: true });
+    }
+
     const newRumour: TransferRumour = {
       id: 'rumour-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       playerId,
@@ -36,9 +58,9 @@ export async function POST(req: NextRequest) {
       date: new Date().toISOString().split('T')[0],
       isManual: true,
       targetClub: targetClub || undefined,
-      targetClubId: targetClubId ? parseInt(targetClubId, 10) : undefined,
+      targetClubId: targetClubId ? parseInt(targetClubId as any, 10) : undefined,
       feeOriginal: feeOriginal || undefined,
-      feeAmount: feeAmount ? parseFloat(feeAmount) : undefined,
+      feeAmount: feeAmount ? parseFloat(feeAmount as any) : undefined,
       currency: currency || undefined,
     };
 

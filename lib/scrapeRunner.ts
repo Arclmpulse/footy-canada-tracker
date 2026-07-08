@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { Player, StatsCache, PlayerStats } from './types';
+import { Player, StatsCache, PlayerStats, TransferRumour } from './types';
 import { fetchFotMobPlayerStats } from './scraper/fotmob';
+import { fetchTransfermarktRumours } from './scraper/transfermarkt';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PLAYERS_FILE = path.join(DATA_DIR, 'players.json');
@@ -91,6 +92,40 @@ export async function runScrape(): Promise<boolean> {
     return true;
   } catch (err) {
     console.error('[Scraper] FotMob sync failed:', err);
+    return false;
+  }
+}
+
+export async function runScrapeTm(): Promise<boolean> {
+  try {
+    const players = loadPlayers();
+    const cache = loadCache();
+
+    if (!cache.rumours) {
+      cache.rumours = {};
+    }
+
+    // Fetch new TM rumours
+    const newTmRumours = await fetchTransfermarktRumours(players);
+
+    // Clean out previous TM rumours from cache, keeping manual ones
+    for (const pid of Object.keys(cache.rumours)) {
+      cache.rumours[pid] = (cache.rumours[pid] ?? []).filter(r => r.source !== 'Transfermarkt');
+    }
+
+    // Merge the new TM rumours into cache
+    for (const [pid, list] of Object.entries(newTmRumours)) {
+      if (!cache.rumours[pid]) {
+        cache.rumours[pid] = [];
+      }
+      cache.rumours[pid] = [...cache.rumours[pid], ...list];
+    }
+
+    saveCache(cache);
+    console.log('[Scraper] Transfermarkt sync completed successfully!');
+    return true;
+  } catch (err) {
+    console.error('[Scraper] Transfermarkt sync failed:', err);
     return false;
   }
 }
