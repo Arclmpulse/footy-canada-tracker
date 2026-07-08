@@ -16,7 +16,7 @@ interface PitchViewProps {
   onRemovePlayer: (slotId: string) => void;
 }
 
-export default function PitchView({
+const PitchView = React.memo(function PitchView({
   formation,
   onFormationChange,
   slots,
@@ -77,7 +77,9 @@ export default function PitchView({
       </div>
     </div>
   );
-}
+});
+
+export default PitchView;
 
 // ─────────────────────────────────────────
 // Individual Pitch Slot (absolute positioned)

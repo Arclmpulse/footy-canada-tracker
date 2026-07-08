@@ -26,7 +26,7 @@ const teamLogoUrl = (teamId?: number) =>
 const leagueLogoUrl = (leagueId?: number) =>
   leagueId ? `https://images.fotmob.com/image_resources/logo/leaguelogo/${leagueId}.png` : null;
 
-export default function StatsTable({
+const StatsTable = React.memo(function StatsTable({
   players,
   stats,
   rumours,
@@ -290,7 +290,9 @@ export default function StatsTable({
       </table>
     </div>
   );
-}
+});
+
+export default StatsTable;
 
 function DraggableRow({ playerId, isOnPitch, children }: { playerId: string; isOnPitch: boolean; children: React.ReactNode }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: playerId });

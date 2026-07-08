@@ -16,20 +16,30 @@ export function loadPlayers(): Player[] {
   }
 }
 
+let memoryCache: StatsCache | null = null;
+
 export function loadCache(): StatsCache {
+  if (memoryCache) {
+    return memoryCache;
+  }
   try {
-    return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+    const data = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+    memoryCache = data;
+    return data;
   } catch {
-    return {
-      lastUpdated: '',
-      players: {},
-      rumours: {},
-    };
+    const fallback: StatsCache = { lastUpdated: '', players: {}, rumours: {} };
+    memoryCache = fallback;
+    return fallback;
   }
 }
 
-export function saveCache(cache: StatsCache) {
-  fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
+export function saveCache(cache: StatsCache): void {
+  memoryCache = cache;
+  try {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
+  } catch (err: any) {
+    console.warn('[Scraper] Failed to write cache file (running in memory fallback):', err.message);
+  }
 }
 
 export async function runScrape(): Promise<boolean> {
