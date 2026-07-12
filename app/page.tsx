@@ -409,10 +409,13 @@ export default function DashboardPage() {
   const updatedLabel = typeof updatedInfo === 'string' ? updatedInfo : `Updated ${updatedInfo.timeStr}`;
 
   return (
-    <div
-      className={`app-shell ${stadium === 'opaque' ? 'theme-opaque' : 'theme-glass'}`}
-      style={activeStadium.url ? { backgroundImage: `url(${activeStadium.url})` } : undefined}
-    >
+    <div className={`app-shell ${stadium === 'opaque' ? 'theme-opaque' : 'theme-glass'}`}>
+      {stadium !== 'opaque' && activeStadium.url && (
+        <div
+          className="app-shell-bg"
+          style={{ backgroundImage: `url(${activeStadium.url})` }}
+        />
+      )}
       {/* ── Header ── */}
       <header className="app-header">
         <div className="app-header-brand" style={{ display: 'flex', alignItems: 'center' }}>
@@ -538,7 +541,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v2.1.3 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v2.2 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}
