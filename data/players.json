@@ -393,5 +393,26 @@
     "club": "Toronto FC Academy Under 16",
     "league": "MLS Next Pro",
     "fotmob_id": 1785163
+  },
+  {
+    "id": "aribim-pepple",
+    "name": "Aribim Pepple",
+    "positions": [
+      "forward"
+    ],
+    "club": "Plymouth Argyle",
+    "league": "League One",
+    "fotmob_id": 1370500
+  },
+  {
+    "id": "jahkeele-marshall-rutty",
+    "name": "Jahkeele Marshall-Rutty",
+    "positions": [
+      "RB",
+      "LB"
+    ],
+    "club": "Red Bull New York",
+    "league": "Major League Soccer",
+    "fotmob_id": 1082103
   }
 ]
