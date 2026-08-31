@@ -37,8 +37,8 @@
     "positions": [
       "ST"
     ],
-    "club": "Union St.Gilloise",
-    "league": "Belgian Pro League",
+    "club": "Brighton & Hove Albion",
+    "league": "Premier League",
     "fotmob_id": 1252132
   },
   {
@@ -50,7 +50,7 @@
       "RM"
     ],
     "club": "Tigres",
-    "league": "Liga MX Clausura",
+    "league": "Liga MX",
     "fotmob_id": 1186513
   },
   {
@@ -73,7 +73,7 @@
       "LW"
     ],
     "club": "Hull City",
-    "league": "Championship",
+    "league": "Premier League",
     "fotmob_id": 932308
   },
   {
@@ -95,8 +95,8 @@
       "CM",
       "DM"
     ],
-    "club": "FC Porto",
-    "league": "Liga Portugal",
+    "club": "Swansea City",
+    "league": "Championship",
     "fotmob_id": 816223
   },
   {
@@ -106,8 +106,8 @@
       "CM",
       "DM"
     ],
-    "club": "Anderlecht",
-    "league": "Belgian Pro League",
+    "club": "Villarreal",
+    "league": "LaLiga",
     "fotmob_id": 1216798
   },
   {
@@ -174,8 +174,8 @@
       "RB",
       "LB"
     ],
-    "club": "Fulham U21",
-    "league": "Belgian Pro League",
+    "club": "Fulham",
+    "league": "Premier League",
     "fotmob_id": 1399943
   },
   {
@@ -195,8 +195,8 @@
     "positions": [
       "GK"
     ],
-    "club": "Crystal Palace U18",
-    "league": "League One",
+    "club": "Dundee FC",
+    "league": "Premiership",
     "fotmob_id": 1415372
   },
   {
@@ -290,8 +290,8 @@
       "RW",
       "RM"
     ],
-    "club": "Austin FC",
-    "league": "Major League Soccer",
+    "club": "Bolton Wanderers",
+    "league": "Championship",
     "fotmob_id": 1082106
   },
   {
@@ -301,8 +301,8 @@
       "CB",
       "RM"
     ],
-    "club": "Bristol City",
-    "league": "League Two",
+    "club": "Motherwell",
+    "league": "Premiership",
     "fotmob_id": 1524014
   },
   {
@@ -336,7 +336,7 @@
       "ST"
     ],
     "club": "AFC Bournemouth",
-    "league": "Championship",
+    "league": "Premier League",
     "fotmob_id": 1253827
   },
   {
@@ -380,7 +380,7 @@
       "RW",
       "ST"
     ],
-    "club": "Supra du Quebec",
+    "club": "Supra du Québec",
     "league": "Premier League",
     "fotmob_id": 1579844
   },
@@ -390,8 +390,8 @@
     "positions": [
       "defender"
     ],
-    "club": "Toronto FC Academy Under 16",
-    "league": "MLS Next Pro",
+    "club": "Sturm Graz II",
+    "league": "2. Liga",
     "fotmob_id": 1785163
   },
   {

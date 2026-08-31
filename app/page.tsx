@@ -112,7 +112,8 @@ export default function DashboardPage() {
       // Initialise league filter with all leagues enabled
       setActiveLeagues(prev => {
         if (prev.size === 0 && data.players?.length) {
-          return new Set(data.players.map((p: Player) => p.league || 'Unknown'));
+          const statsMap = data.cache?.players ?? {};
+          return new Set(data.players.map((p: Player) => statsMap[p.id]?.league || p.league || 'Unknown'));
         }
         return prev;
       });
@@ -541,7 +542,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v2.2 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v3.0 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}
@@ -558,13 +559,14 @@ export default function DashboardPage() {
       {showLeagueFilter && (
         <LeagueFilterModal
           players={players}
+          stats={stats}
           activeLeagues={activeLeagues}
           onToggle={league => setActiveLeagues(prev => {
             const next = new Set(prev);
             if (next.has(league)) next.delete(league); else next.add(league);
             return next;
           })}
-          onSelectAll={() => setActiveLeagues(new Set(players.map(p => p.league || 'Unknown')))}
+          onSelectAll={() => setActiveLeagues(new Set(players.map(p => stats[p.id]?.league || p.league || 'Unknown')))}
           onClearAll={() => setActiveLeagues(new Set())}
           onClose={() => setShowLeagueFilter(false)}
         />

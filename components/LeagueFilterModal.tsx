@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useMemo, useEffect } from 'react';
-import { Player } from '@/lib/types';
+import { Player, PlayerStats } from '@/lib/types';
 
 interface LeagueFilterModalProps {
   players: Player[];
+  stats?: Record<string, PlayerStats>;
   activeLeagues: Set<string>;
   onToggle: (league: string) => void;
   onSelectAll: () => void;
@@ -14,6 +15,7 @@ interface LeagueFilterModalProps {
 
 export default function LeagueFilterModal({
   players,
+  stats = {},
   activeLeagues,
   onToggle,
   onSelectAll,
@@ -32,11 +34,11 @@ export default function LeagueFilterModal({
   const leagues = useMemo(() => {
     const map = new Map<string, number>();
     for (const p of players) {
-      const l = p.league || 'Unknown';
+      const l = stats[p.id]?.league || p.league || 'Unknown';
       map.set(l, (map.get(l) ?? 0) + 1);
     }
     return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  }, [players]);
+  }, [players, stats]);
 
   const allSelected = leagues.every(([l]) => activeLeagues.has(l));
   const noneSelected = leagues.every(([l]) => !activeLeagues.has(l));

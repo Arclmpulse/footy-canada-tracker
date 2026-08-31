@@ -48,8 +48,8 @@ const StatsTable = React.memo(function StatsTable({
   };
 
   const filtered = useMemo(
-    () => players.filter(p => activeLeagues.has(p.league || 'Unknown')),
-    [players, activeLeagues]
+    () => players.filter(p => activeLeagues.has(stats[p.id]?.league || p.league || 'Unknown')),
+    [players, stats, activeLeagues]
   );
 
   const sorted = useMemo(() => {
@@ -80,8 +80,10 @@ const StatsTable = React.memo(function StatsTable({
         case 'position': av = posOrder[aPos] ?? 99; bv = posOrder[bPos] ?? 99; break;
         case 'club': av = sa?.club ?? a.club; bv = sb?.club ?? b.club; break;
         case 'league': {
-          const rankA = (leagueRankings as Record<string, number>)[sa?.league ?? a.league] ?? 999;
-          const rankB = (leagueRankings as Record<string, number>)[sb?.league ?? b.league] ?? 999;
+          const leagueA = sa?.league ?? a.league;
+          const leagueB = sb?.league ?? b.league;
+          const rankA = (leagueRankings as Record<string, number>)[leagueA] ?? 999;
+          const rankB = (leagueRankings as Record<string, number>)[leagueB] ?? 999;
           av = rankA;
           bv = rankB;
           break;
@@ -97,8 +99,9 @@ const StatsTable = React.memo(function StatsTable({
           const parseVal = (v?: string) => {
             if (!v) return 0;
             const n = parseFloat(v.replace(/[^0-9.]/g, ''));
-            if (v.includes('m')) return n * 1_000_000;
-            if (v.includes('k')) return n * 1_000;
+            if (isNaN(n)) return 0;
+            if (v.includes('m') || v.includes('M')) return n * 1_000_000;
+            if (v.includes('k') || v.includes('K')) return n * 1_000;
             return n;
           };
           av = parseVal(sa?.marketValue); bv = parseVal(sb?.marketValue); break;
@@ -153,10 +156,17 @@ const StatsTable = React.memo(function StatsTable({
             const s = stats[player.id];
             const isOnPitch = lineupPlayerIds.has(player.id);
 
-            const displayPositions = s?.positionsDetailed && s.positionsDetailed.length > 0
-              ? s.positionsDetailed.join(' / ')
-              : player.positions.join(' / ');
+            const positionsList = s?.positionsDetailed && s.positionsDetailed.length > 0
+              ? s.positionsDetailed
+              : player.positions;
             const primaryPosition = s?.positionsDetailed?.[0] ?? player.positions[0] ?? 'ST';
+            const displayPositions = positionsList.join(' / ');
+
+            // Chunk positions into rows of max 4 so wide lists spill to next row
+            const posChunks: string[][] = [];
+            for (let i = 0; i < positionsList.length; i += 4) {
+              posChunks.push(positionsList.slice(i, i + 4));
+            }
 
             const displayClub = s?.club || player.club;
             const displayLeague = s?.league || player.league;
@@ -170,13 +180,32 @@ const StatsTable = React.memo(function StatsTable({
                 ? [{ id: 'auto-' + player.id, playerId: player.id, headline: s.rumour, source: 'FotMob', date: s.lastGameDate || '', isManual: false } as TransferRumour]
                 : [];
 
+            const lastOpponent = s?.last5Games?.[0]?.opponent;
+            const lastComp = s?.last5Games?.[0]?.competition;
+            const lastGameTooltip = lastOpponent
+              ? `vs ${lastOpponent}${lastComp ? ` (${lastComp})` : ''}`
+              : undefined;
+
             return (
               <DraggableRow key={player.id} playerId={player.id} isOnPitch={isOnPitch}>
                 {/* Position */}
                 <td>
-                  <span className={`pos-badge ${primaryPosition}`} title={`All positions: ${displayPositions}`}>
-                    {displayPositions}
-                  </span>
+                  {posChunks.length > 1 ? (
+                    <div
+                      style={{ display: 'inline-flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start' }}
+                      title={`All positions: ${displayPositions}`}
+                    >
+                      {posChunks.map((chunk, cIdx) => (
+                        <span key={cIdx} className={`pos-badge ${primaryPosition}`}>
+                          {chunk.join(' / ')}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className={`pos-badge ${primaryPosition}`} title={`All positions: ${displayPositions}`}>
+                      {displayPositions}
+                    </span>
+                  )}
                 </td>
 
                 {/* Player Name */}
@@ -216,7 +245,7 @@ const StatsTable = React.memo(function StatsTable({
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
                     )}
-                    <span style={{ color: 'var(--text-secondary)', fontSize: 11.5 }}>{displayClub}</span>
+                    <span style={{ color: 'var(--text-primary)', fontSize: 11.5, fontWeight: 700 }}>{displayClub}</span>
                   </div>
                 </td>
 
@@ -232,7 +261,7 @@ const StatsTable = React.memo(function StatsTable({
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
                     )}
-                    <span style={{ color: 'var(--text-secondary)', fontSize: 11.5 }}>{displayLeague}</span>
+                    <span style={{ color: 'var(--text-primary)', fontSize: 11.5, fontWeight: 700 }}>{displayLeague}</span>
                   </div>
                 </td>
 
@@ -259,10 +288,17 @@ const StatsTable = React.memo(function StatsTable({
 
                 {/* Last Game */}
                 <td>
-                  {s?.lastGameRating != null ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      <RatingChip rating={s.lastGameRating} />
-                      <span style={{ fontSize: 9.5, color: 'var(--text-muted)' }}>{formatDate(s.lastGameDate)}</span>
+                  {s?.lastGameRating != null || (s?.last5Games && s.last5Games.length > 0) ? (
+                    <div
+                      style={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                      title={lastGameTooltip}
+                    >
+                      <RatingChip rating={s?.lastGameRating ?? null} title={lastGameTooltip} />
+                      {s?.lastGameDate && (
+                        <span style={{ fontSize: 9.5, color: 'var(--text-secondary)', fontWeight: 700 }}>
+                          {formatDate(s.lastGameDate)}
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <span className="text-muted">—</span>
@@ -270,7 +306,7 @@ const StatsTable = React.memo(function StatsTable({
                 </td>
 
                 {/* Market Value */}
-                <td style={{ fontSize: 11, color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>
+                <td style={{ fontSize: 11, color: 'var(--text-primary)', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
                   {s?.marketValue ?? '—'}
                 </td>
 
@@ -309,10 +345,10 @@ function DraggableRow({ playerId, isOnPitch, children }: { playerId: string; isO
   );
 }
 
-function RatingChip({ rating }: { rating: number | null }) {
+function RatingChip({ rating, title }: { rating: number | null; title?: string }) {
   const cls = getRatingClass(rating);
   return (
-    <span className={`rating-chip ${cls}`}>
+    <span className={`rating-chip ${cls}`} title={title}>
       {rating != null ? rating.toFixed(1) : '—'}
     </span>
   );
