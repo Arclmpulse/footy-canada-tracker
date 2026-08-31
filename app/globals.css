@@ -643,11 +643,12 @@ body {
   background: var(--bg-card);
 }
 
-.stats-table-wrap {
+.stats-container {
   flex: 1;
-  overflow: auto;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .stats-table-toolbar {
@@ -659,6 +660,15 @@ body {
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   gap: 10px;
+}
+
+.stats-table-wrap {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: contain;
+  min-height: 0;
 }
 
 .stats-toolbar-left,
@@ -722,8 +732,10 @@ body {
    ============================================ */
 .stats-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 12.5px;
+  font-weight: 700;
 }
 
 .stats-table th {
@@ -764,11 +776,17 @@ body {
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
   white-space: nowrap;
+  font-weight: 700;
 }
 
 .stats-table tr {
   transition: background var(--transition);
   cursor: pointer;
+}
+
+/* Alternating row stripes — FM style */
+.stats-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.015);
 }
 
 .stats-table tr:hover td {
@@ -782,6 +800,86 @@ body {
 .stats-table tr.on-pitch td:first-child {
   border-left: 2px solid var(--canada-red);
 }
+
+/* ============================================
+   FROZEN COLUMNS (POS + PLAYER) — FM STYLE
+   ============================================ */
+
+/* Column 1: Pos (0px to 82px) */
+.stats-table th:nth-child(1),
+.stats-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  box-sizing: border-box;
+}
+
+/* Column 2: Player (82px onwards) */
+.stats-table th:nth-child(2),
+.stats-table td:nth-child(2) {
+  position: sticky;
+  left: 82px;
+  min-width: 140px;
+  box-sizing: border-box;
+}
+
+/* Subtle separator shadow after the frozen Player column */
+.stats-table th:nth-child(2),
+.stats-table td:nth-child(2) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stats-table th:nth-child(2)::after,
+.stats-table td:nth-child(2)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -6px;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.35), transparent);
+  pointer-events: none;
+}
+
+/* Header z-index: higher so it stays on top of both vertical & horizontal scroll */
+.stats-table th:nth-child(1),
+.stats-table th:nth-child(2) {
+  z-index: 10;
+  background: #151822;
+}
+
+/* Body cell backgrounds (fully opaque to prevent any bleed-through) */
+.stats-table td:nth-child(1),
+.stats-table td:nth-child(2) {
+  z-index: 4;
+  background: #0d1017;
+}
+
+/* Alternating even row background for frozen cells */
+.stats-table tbody tr:nth-child(even) td:nth-child(1),
+.stats-table tbody tr:nth-child(even) td:nth-child(2) {
+  background: #11141e;
+}
+
+/* Hover state for frozen cells */
+.stats-table tbody tr:hover td:nth-child(1),
+.stats-table tbody tr:hover td:nth-child(2) {
+  background: #1c2230;
+}
+
+/* On-pitch state for frozen cells */
+.stats-table tbody tr.on-pitch td:nth-child(1),
+.stats-table tbody tr.on-pitch td:nth-child(2) {
+  background: #181318;
+}
+
+.stats-table tbody tr.on-pitch:hover td:nth-child(1),
+.stats-table tbody tr.on-pitch:hover td:nth-child(2) {
+  background: #231c23;
+}
+
 
 /* Player name cell */
 .player-name-cell {
@@ -979,6 +1077,219 @@ body {
 }
 
 /* ============================================
+   SEARCH BAR
+   ============================================ */
+.stats-search-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px 4px 28px;
+  border-radius: var(--radius-pill);
+  outline: none;
+  transition: border-color var(--transition), width var(--transition);
+  width: 160px;
+}
+
+.stats-search-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stats-search-input:focus {
+  border-color: var(--canada-red);
+  width: 200px;
+}
+
+.stats-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.stats-search-icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.stats-search-kbd {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 0px 4px;
+  border-radius: 3px;
+  pointer-events: none;
+  line-height: 16px;
+}
+
+/* Position group badges in toolbar */
+.pos-group-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.pos-group-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.pos-group-badge.gk {
+  background: rgba(69, 208, 114, 0.1);
+  color: var(--rating-great);
+}
+
+.pos-group-badge.def {
+  background: rgba(82, 147, 227, 0.1);
+  color: #5293e3;
+}
+
+.pos-group-badge.mid {
+  background: rgba(156, 224, 49, 0.1);
+  color: var(--rating-good);
+}
+
+.pos-group-badge.fwd {
+  background: rgba(213, 43, 30, 0.1);
+  color: #ff6b6b;
+}
+
+/* ============================================
+   MOBILE CARD LAYOUT (portrait ≤600px)
+   ============================================ */
+.player-card-list-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  padding: 0;
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  cursor: grab;
+  transition: background var(--transition);
+  min-height: 56px;
+}
+
+.player-card:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.player-card:active {
+  background: var(--bg-card-hover);
+}
+
+.player-card.on-pitch {
+  border-left: 3px solid var(--canada-red);
+  background: rgba(213, 43, 30, 0.04);
+}
+
+.player-card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-card-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.player-card-club {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.player-card-stats {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.player-card-stat {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.player-card-stat.highlight {
+  background: rgba(69, 208, 114, 0.12);
+  color: var(--rating-great);
+}
+
+.player-card-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.player-card-rating-value {
+  font-size: 16px;
+  font-weight: 900;
+  min-width: 38px;
+  text-align: center;
+}
+
+.player-card-rating-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
    BUTTONS
    ============================================ */
 .btn {
@@ -1005,6 +1316,18 @@ body {
 .btn-primary:hover {
   background: var(--canada-red-dark);
   box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .btn-ghost {
@@ -1529,6 +1852,7 @@ body {
 @media (max-height: 550px) and (orientation: landscape) {
   .app-main {
     flex-direction: row;
+    touch-action: pan-x pan-y;
   }
 
   .pitch-panel {
@@ -1567,5 +1891,49 @@ body {
   .stats-panel {
     flex: 1;
     border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .stats-table-wrap {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============================================
+   MOBILE CARD VISIBILITY TOGGLES
+   ============================================ */
+/* Hide card list on desktop, show table */
+.player-card-list {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  /* Hide table on small mobile, show cards */
+  .stats-table {
+    display: none;
+  }
+
+  .player-card-list {
+    display: flex;
+  }
+
+  .stats-search-input {
+    width: 120px;
+  }
+
+  .stats-search-input:focus {
+    width: 150px;
+  }
+
+  .stats-search-kbd {
+    display: none;
+  }
+
+  .pos-group-badges {
+    display: none;
+  }
+
+  .stats-table-toolbar {
+    flex-wrap: wrap;
   }
 }

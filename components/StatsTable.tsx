@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Player, PlayerStats, TransferRumour } from '@/lib/types';
 import { getRatingClass, getRatingColor, getRatingBarHeight, formatDate } from './utils';
@@ -38,6 +38,24 @@ const StatsTable = React.memo(function StatsTable({
   const [sortKey, setSortKey] = useState<SortKey>('league');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [injuredToBottom, setInjuredToBottom] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcuts: / to focus search, Esc to clear
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+      if (e.key === 'Escape' && document.activeElement === searchRef.current) {
+        setSearchQuery('');
+        searchRef.current?.blur();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -60,10 +78,42 @@ const StatsTable = React.memo(function StatsTable({
     return l || 'Unknown';
   };
 
-  const filtered = useMemo(
+  const leagueFiltered = useMemo(
     () => players.filter(p => activeLeagues.has(getNormalizedLeague(stats[p.id], p))),
     [players, stats, activeLeagues]
   );
+
+  // Search filter
+  const filtered = useMemo(() => {
+    if (!searchQuery.trim()) return leagueFiltered;
+    const q = searchQuery.toLowerCase();
+    return leagueFiltered.filter(p => {
+      const s = stats[p.id];
+      const name = p.name.toLowerCase();
+      const club = (s?.club || p.club || '').toLowerCase();
+      const pos = (s?.positionsDetailed?.[0] ?? p.positions[0] ?? '').toLowerCase();
+      const league = getNormalizedLeague(s, p).toLowerCase();
+      return name.includes(q) || club.includes(q) || pos.includes(q) || league.includes(q);
+    });
+  }, [leagueFiltered, stats, searchQuery]);
+
+  // Position group counts for toolbar
+  const positionCounts = useMemo(() => {
+    const groups = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+    const defPositions = new Set(['LB', 'LCB', 'CB', 'RCB', 'RB', 'LWB', 'RWB']);
+    const midPositions = new Set(['LDM', 'DM', 'RDM', 'LCM', 'CM', 'RCM', 'LM', 'RM', 'LAM', 'CAM', 'RAM', 'AM']);
+    const fwdPositions = new Set(['LW', 'RW', 'LS', 'ST', 'RS', 'SS', 'CF']);
+    for (const p of filtered) {
+      const s = stats[p.id];
+      const pos = s?.positionsDetailed?.[0] ?? p.positions[0] ?? 'ST';
+      if (pos === 'GK') groups.GK++;
+      else if (defPositions.has(pos)) groups.DEF++;
+      else if (midPositions.has(pos)) groups.MID++;
+      else if (fwdPositions.has(pos)) groups.FWD++;
+      else groups.FWD++; // fallback
+    }
+    return groups;
+  }, [filtered, stats]);
 
   const sorted = useMemo(() => {
     const posOrder: Record<string, number> = {
@@ -156,14 +206,33 @@ const StatsTable = React.memo(function StatsTable({
   );
 
   return (
-    <div className="stats-table-wrap">
+    <div className="stats-container">
       <div className="stats-table-toolbar">
         <div className="stats-toolbar-left">
           <span className="stats-count-badge">
             {sorted.length} {sorted.length === 1 ? 'Player' : 'Players'}
           </span>
+          <div className="pos-group-badges">
+            <span className="pos-group-badge gk">{positionCounts.GK} GK</span>
+            <span className="pos-group-badge def">{positionCounts.DEF} DEF</span>
+            <span className="pos-group-badge mid">{positionCounts.MID} MID</span>
+            <span className="pos-group-badge fwd">{positionCounts.FWD} FWD</span>
+          </div>
         </div>
         <div className="stats-toolbar-right">
+          <div className="stats-search-wrap">
+            <span className="stats-search-icon">🔍</span>
+            <input
+              ref={searchRef}
+              type="text"
+              className="stats-search-input"
+              placeholder="Search players…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onPointerDown={e => e.stopPropagation()}
+            />
+            <span className="stats-search-kbd">/</span>
+          </div>
           <button
             className={`btn-toggle-injured ${injuredToBottom ? 'active' : ''}`}
             onClick={() => setInjuredToBottom(prev => !prev)}
@@ -174,7 +243,8 @@ const StatsTable = React.memo(function StatsTable({
           </button>
         </div>
       </div>
-      <table className="stats-table">
+      <div className="stats-table-wrap">
+        <table className="stats-table">
         <thead>
           <tr>
             <Th label="Pos" col="position" />
@@ -203,10 +273,10 @@ const StatsTable = React.memo(function StatsTable({
             const primaryPosition = s?.positionsDetailed?.[0] ?? player.positions[0] ?? 'ST';
             const displayPositions = positionsList.join(' / ');
 
-            // Chunk positions into rows of max 4 so wide lists spill to next row
+            // Chunk positions into rows of max 3 so wide lists spill to next row
             const posChunks: string[][] = [];
-            for (let i = 0; i < positionsList.length; i += 4) {
-              posChunks.push(positionsList.slice(i, i + 4));
+            for (let i = 0; i < positionsList.length; i += 3) {
+              posChunks.push(positionsList.slice(i, i + 3));
             }
 
             const displayClub = s?.club || player.club;
@@ -348,7 +418,7 @@ const StatsTable = React.memo(function StatsTable({
                             maxWidth: 120,
                           }}
                         >
-                          <span style={{ fontSize: 9.5, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'lowercase' }}>vs</span>
+                          <span style={{ fontSize: 9.5, color: '#ffffff', fontWeight: 700, textTransform: 'lowercase' }}>vs</span>
                           {lastOpponentTeamId ? (
                             <img
                               src={`https://images.fotmob.com/image_resources/logo/teamlogo/${lastOpponentTeamId}.png`}
@@ -374,7 +444,7 @@ const StatsTable = React.memo(function StatsTable({
                         </div>
                       )}
                       {s?.lastGameDate && (
-                        <span style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 600 }}>
+                        <span style={{ fontSize: 9, color: '#ffffff', fontWeight: 700 }}>
                           {formatDate(s.lastGameDate)}
                         </span>
                       )}
@@ -403,7 +473,71 @@ const StatsTable = React.memo(function StatsTable({
           })}
         </tbody>
       </table>
+
+      {/* Mobile card layout (visible at ≤600px via CSS) */}
+      <div className="player-card-list">
+        <div className="player-card-list-inner">
+          {sorted.map(player => {
+            const s = stats[player.id];
+            const isOnPitch = lineupPlayerIds.has(player.id);
+            const primaryPosition = s?.positionsDetailed?.[0] ?? player.positions[0] ?? 'ST';
+            const displayClub = s?.club || player.club;
+            const teamLogo = teamLogoUrl(s?.teamId);
+            const rating = s?.seasonAvgRating;
+
+            return (
+              <DraggableCard key={player.id} playerId={player.id} isOnPitch={isOnPitch}>
+                <span className={`pos-badge ${primaryPosition}`} style={{ fontSize: 10, padding: '2px 6px' }}>
+                  {primaryPosition}
+                </span>
+                <div className="player-card-main">
+                  <div className="player-card-top">
+                    {s?.injured && <span className="injury-icon" title="Injured">🇨🇭</span>}
+                    <span className="player-card-name">
+                      {player.fotmob_url || player.fotmob_id ? (
+                        <a
+                          href={player.fotmob_url || `https://www.fotmob.com/players/${player.fotmob_id}/`}
+                          target="_blank"
+                          rel="noreferrer"
+                          onPointerDown={e => e.stopPropagation()}
+                        >
+                          {player.name}
+                        </a>
+                      ) : player.name}
+                    </span>
+                  </div>
+                  <div className="player-card-club">
+                    {teamLogo && (
+                      <img
+                        src={teamLogo}
+                        alt={displayClub}
+                        width={13} height={13}
+                        style={{ objectFit: 'contain' }}
+                        onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    )}
+                    {displayClub}
+                  </div>
+                  <div className="player-card-stats">
+                    {s?.appearances != null && <span className="player-card-stat">Apps {s.appearances}</span>}
+                    {(s?.goals ?? 0) > 0 && <span className="player-card-stat highlight">⚽ {s!.goals}</span>}
+                    {(s?.assists ?? 0) > 0 && <span className="player-card-stat" style={{ background: 'rgba(82,147,227,0.12)', color: '#5293e3' }}>🅰 {s!.assists}</span>}
+                    {s?.marketValue && <span className="player-card-stat">{s.marketValue}</span>}
+                  </div>
+                </div>
+                <div className="player-card-rating">
+                  <span className="player-card-rating-value" style={{ color: getRatingColor(rating ?? null) }}>
+                    {rating != null ? rating.toFixed(1) : '—'}
+                  </span>
+                  <span className="player-card-rating-label">AVG</span>
+                </div>
+              </DraggableCard>
+            );
+          })}
+        </div>
+      </div>
     </div>
+  </div>
   );
 });
 
@@ -421,6 +555,21 @@ function DraggableRow({ playerId, isOnPitch, children }: { playerId: string; isO
     >
       {children}
     </tr>
+  );
+}
+
+function DraggableCard({ playerId, isOnPitch, children }: { playerId: string; isOnPitch: boolean; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: playerId });
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className={`player-card ${isOnPitch ? 'on-pitch' : ''}`}
+      style={{ cursor: 'grab', opacity: isDragging ? 0.35 : 1 }}
+    >
+      {children}
+    </div>
   );
 }
 

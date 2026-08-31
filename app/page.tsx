@@ -56,6 +56,17 @@ export default function DashboardPage() {
       const savedPitch = localStorage.getItem('canada-tracker-pitch-collapsed');
       if (savedPitch) setPitchCollapsed(savedPitch === 'true');
     } catch { }
+
+    // Auto-collapse pitch on landscape mobile to avoid scroll trap
+    const landscapeMq = window.matchMedia('(max-height: 550px) and (orientation: landscape)');
+    if (landscapeMq.matches) {
+      setPitchCollapsed(true);
+    }
+    const handleOrientationChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setPitchCollapsed(true);
+    };
+    landscapeMq.addEventListener('change', handleOrientationChange);
+    return () => landscapeMq.removeEventListener('change', handleOrientationChange);
   }, []);
 
   const handleTogglePitch = () => {
