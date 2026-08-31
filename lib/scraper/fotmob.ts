@@ -17,9 +17,13 @@ export async function fetchTeamPrimaryLeague(
 
   try {
     const res = await axios.get(`https://www.fotmob.com/api/data/teams?id=${teamId}`, { headers, timeout: 6000 });
-    const primaryLeagueName = res.data?.details?.primaryLeagueName || res.data?.overview?.table?.[0]?.data?.leagueName;
-    const primaryLeagueId = res.data?.details?.primaryLeagueId || res.data?.overview?.table?.[0]?.data?.leagueId;
+    let primaryLeagueName = res.data?.details?.primaryLeagueName || res.data?.overview?.table?.[0]?.data?.leagueName;
+    let primaryLeagueId = res.data?.details?.primaryLeagueId || res.data?.overview?.table?.[0]?.data?.leagueId;
     if (primaryLeagueName) {
+      if (primaryLeagueId === 9986 || primaryLeagueName === 'Canadian Premier League') {
+        primaryLeagueName = 'Canadian Premier League';
+        primaryLeagueId = 9986;
+      }
       const result = { league: primaryLeagueName, leagueId: primaryLeagueId };
       teamLeagueCache.set(teamId, result);
       return result;
@@ -75,6 +79,12 @@ export async function fetchFotMobPlayerStats(
         league = data.nextMatch.leagueName;
         leagueId = data.nextMatch.leagueId;
       }
+    }
+
+    // Disambiguate Canadian Premier League from English Premier League (FotMob returns "Premier League" for both)
+    if (leagueId === 9986 || (league === 'Premier League' && data.mainLeague?.leagueId === 9986)) {
+      league = 'Canadian Premier League';
+      leagueId = 9986;
     }
 
     // Kit number (shirt number on primaryTeam, if available)
@@ -159,11 +169,13 @@ export async function fetchFotMobPlayerStats(
     const last5Games: GameRating[] = last5Events.map((m: any) => {
       const date = m.matchDate?.utcTime ? m.matchDate.utcTime.split('T')[0] : '';
       const opponent = m.opponentTeamName || 'Unknown';
+      const opponentTeamId = m.opponentTeamId ? parseInt(m.opponentTeamId, 10) : undefined;
       const rawRating = m.ratingProps?.rating;
       const rating = rawRating && rawRating > 0 ? Math.round(rawRating * 10) / 10 : null;
       return {
         date,
         opponent,
+        opponentTeamId,
         rating,
         minutesPlayed: m.minutesPlayed || 0,
         competition: m.leagueName || league,

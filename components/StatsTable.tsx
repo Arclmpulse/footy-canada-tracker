@@ -35,20 +35,33 @@ const StatsTable = React.memo(function StatsTable({
   onAddRumour,
   onDeleteRumour,
 }: StatsTableProps) {
-  const [sortKey, setSortKey] = useState<SortKey>('position');
+  const [sortKey, setSortKey] = useState<SortKey>('league');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [injuredToBottom, setInjuredToBottom] = useState<boolean>(true);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
-      setSortDir('desc');
+      setSortDir(key === 'league' || key === 'position' || key === 'age' ? 'asc' : 'desc');
     }
   };
 
+  const getNormalizedLeague = (s?: PlayerStats, p?: Player) => {
+    if (s?.leagueId === 9986 || s?.league === 'Canadian Premier League' || p?.league === 'Canadian Premier League') {
+      return 'Canadian Premier League';
+    }
+    const club = s?.club || p?.club || '';
+    const l = (s?.league || p?.league || '').trim();
+    if (l === 'Premier League' && (club === 'Inter Toronto FC' || club === 'Supra du Québec' || club === 'Forge FC' || club === 'Cavalry FC' || club === 'Pacific FC' || club === 'York United')) {
+      return 'Canadian Premier League';
+    }
+    return l || 'Unknown';
+  };
+
   const filtered = useMemo(
-    () => players.filter(p => activeLeagues.has(stats[p.id]?.league || p.league || 'Unknown')),
+    () => players.filter(p => activeLeagues.has(getNormalizedLeague(stats[p.id], p))),
     [players, stats, activeLeagues]
   );
 
@@ -69,6 +82,16 @@ const StatsTable = React.memo(function StatsTable({
     return [...filtered].sort((a, b) => {
       const sa = stats[a.id];
       const sb = stats[b.id];
+
+      // If injuredToBottom is active, move all injured players to the bottom
+      if (injuredToBottom) {
+        const aInjured = !!sa?.injured;
+        const bInjured = !!sb?.injured;
+        if (aInjured !== bInjured) {
+          return aInjured ? 1 : -1;
+        }
+      }
+
       let av: number | string | null = null;
       let bv: number | string | null = null;
 
@@ -80,10 +103,11 @@ const StatsTable = React.memo(function StatsTable({
         case 'position': av = posOrder[aPos] ?? 99; bv = posOrder[bPos] ?? 99; break;
         case 'club': av = sa?.club ?? a.club; bv = sb?.club ?? b.club; break;
         case 'league': {
-          const leagueA = sa?.league ?? a.league;
-          const leagueB = sb?.league ?? b.league;
-          const rankA = (leagueRankings as Record<string, number>)[leagueA] ?? 999;
-          const rankB = (leagueRankings as Record<string, number>)[leagueB] ?? 999;
+          const leagueA = getNormalizedLeague(sa, a);
+          const leagueB = getNormalizedLeague(sb, b);
+          const rankings = leagueRankings as Record<string, number>;
+          const rankA = rankings[leagueA] ?? 999;
+          const rankB = rankings[leagueB] ?? 999;
           av = rankA;
           bv = rankB;
           break;
@@ -115,7 +139,7 @@ const StatsTable = React.memo(function StatsTable({
         : (av as number) - (bv as number);
       return sortDir === 'asc' ? cmp : -cmp;
     });
-  }, [filtered, stats, sortKey, sortDir]);
+  }, [filtered, stats, sortKey, sortDir, injuredToBottom]);
 
   const arrow = (key: SortKey) =>
     sortKey === key ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
@@ -133,6 +157,23 @@ const StatsTable = React.memo(function StatsTable({
 
   return (
     <div className="stats-table-wrap">
+      <div className="stats-table-toolbar">
+        <div className="stats-toolbar-left">
+          <span className="stats-count-badge">
+            {sorted.length} {sorted.length === 1 ? 'Player' : 'Players'}
+          </span>
+        </div>
+        <div className="stats-toolbar-right">
+          <button
+            className={`btn-toggle-injured ${injuredToBottom ? 'active' : ''}`}
+            onClick={() => setInjuredToBottom(prev => !prev)}
+            title={injuredToBottom ? 'Injured players are moved to bottom (click to sort normally)' : 'Click to move injured players to bottom'}
+          >
+            <span className="injured-toggle-dot" />
+            <span>🚑 Injured to bottom</span>
+          </button>
+        </div>
+      </div>
       <table className="stats-table">
         <thead>
           <tr>
@@ -169,7 +210,7 @@ const StatsTable = React.memo(function StatsTable({
             }
 
             const displayClub = s?.club || player.club;
-            const displayLeague = s?.league || player.league;
+            const displayLeague = getNormalizedLeague(s, player);
             const teamLogo = teamLogoUrl(s?.teamId);
             const leagueLogo = leagueLogoUrl(s?.leagueId);
 
@@ -180,8 +221,10 @@ const StatsTable = React.memo(function StatsTable({
                 ? [{ id: 'auto-' + player.id, playerId: player.id, headline: s.rumour, source: 'FotMob', date: s.lastGameDate || '', isManual: false } as TransferRumour]
                 : [];
 
-            const lastOpponent = s?.last5Games?.[0]?.opponent;
-            const lastComp = s?.last5Games?.[0]?.competition;
+            const lastGame = s?.last5Games?.[0];
+            const lastOpponent = lastGame?.opponent;
+            const lastOpponentTeamId = lastGame?.opponentTeamId;
+            const lastComp = lastGame?.competition;
             const lastGameTooltip = lastOpponent
               ? `vs ${lastOpponent}${lastComp ? ` (${lastComp})` : ''}`
               : undefined;
@@ -290,12 +333,48 @@ const StatsTable = React.memo(function StatsTable({
                 <td>
                   {s?.lastGameRating != null || (s?.last5Games && s.last5Games.length > 0) ? (
                     <div
-                      style={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}
                       title={lastGameTooltip}
                     >
                       <RatingChip rating={s?.lastGameRating ?? null} title={lastGameTooltip} />
+                      {lastOpponent && (
+                        <div
+                          className="last-game-vs-row"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            marginTop: 1,
+                            maxWidth: 120,
+                          }}
+                        >
+                          <span style={{ fontSize: 9.5, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'lowercase' }}>vs</span>
+                          {lastOpponentTeamId ? (
+                            <img
+                              src={`https://images.fotmob.com/image_resources/logo/teamlogo/${lastOpponentTeamId}.png`}
+                              alt={lastOpponent}
+                              width={14}
+                              height={14}
+                              style={{ objectFit: 'contain', flexShrink: 0 }}
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          ) : null}
+                          <span
+                            style={{
+                              fontSize: 10.5,
+                              color: 'var(--text-primary)',
+                              fontWeight: 600,
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {lastOpponent}
+                          </span>
+                        </div>
+                      )}
                       {s?.lastGameDate && (
-                        <span style={{ fontSize: 9.5, color: 'var(--text-secondary)', fontWeight: 700 }}>
+                        <span style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 600 }}>
                           {formatDate(s.lastGameDate)}
                         </span>
                       )}

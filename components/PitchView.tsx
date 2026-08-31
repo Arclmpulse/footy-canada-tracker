@@ -14,6 +14,8 @@ interface PitchViewProps {
   stats: Record<string, PlayerStats>;
   onSlotClick: (slotId: string) => void;
   onRemovePlayer: (slotId: string) => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 const PitchView = React.memo(function PitchView({
@@ -24,22 +26,57 @@ const PitchView = React.memo(function PitchView({
   stats,
   onSlotClick,
   onRemovePlayer,
+  collapsed = false,
+  onToggleCollapse,
 }: PitchViewProps) {
   const formationSlots = FORMATIONS[formation];
+  const filledCount = Object.values(slots).filter(Boolean).length;
+
+  if (collapsed) {
+    return (
+      <div className="pitch-panel collapsed">
+        <button
+          className="pitch-collapsed-tab"
+          onClick={onToggleCollapse}
+          title="Click to show pitch / lineup"
+        >
+          <span className="pitch-collapsed-icon">⚽</span>
+          <span className="pitch-collapsed-text">Lineup ({formation} · {filledCount}/11)</span>
+          <span className="pitch-collapsed-arrow">▶</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="pitch-panel">
       <div className="pitch-panel-header">
-        <span className="pitch-panel-title">Lineup</span>
-        <select
-          className="formation-select"
-          value={formation}
-          onChange={e => onFormationChange(e.target.value as Formation)}
-        >
-          {(Object.keys(FORMATION_LABELS) as Formation[]).map(f => (
-            <option key={f} value={f}>{FORMATION_LABELS[f]}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="pitch-panel-title">Lineup</span>
+          <span className="pitch-panel-badge">{filledCount}/11</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <select
+            className="formation-select"
+            value={formation}
+            onChange={e => onFormationChange(e.target.value as Formation)}
+          >
+            {(Object.keys(FORMATION_LABELS) as Formation[]).map(f => (
+              <option key={f} value={f}>{FORMATION_LABELS[f]}</option>
+            ))}
+          </select>
+          {onToggleCollapse && (
+            <button
+              className="pitch-collapse-btn"
+              onClick={onToggleCollapse}
+              title="Collapse Lineup"
+              aria-label="Collapse Lineup"
+            >
+              <span className="collapse-arrow-desktop">◀</span>
+              <span className="collapse-arrow-mobile">▲</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="pitch-outer">

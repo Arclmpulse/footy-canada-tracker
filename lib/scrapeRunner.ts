@@ -19,14 +19,12 @@ export function loadPlayers(): Player[] {
 let memoryCache: StatsCache | null = null;
 
 export function loadCache(): StatsCache {
-  if (memoryCache) {
-    return memoryCache;
-  }
   try {
     const data = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
     memoryCache = data;
     return data;
   } catch {
+    if (memoryCache) return memoryCache;
     const fallback: StatsCache = { lastUpdated: '', players: {}, rumours: {} };
     memoryCache = fallback;
     return fallback;

@@ -191,6 +191,109 @@ body {
   background: rgba(10, 12, 16, 0.35) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.pitch-panel.collapsed {
+  width: 42px;
+  min-width: 42px;
+  background: rgba(10, 12, 16, 0.65) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.15s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pitch-panel.collapsed:hover {
+  background: rgba(213, 43, 30, 0.15) !important;
+  border-right-color: var(--canada-red);
+}
+
+.pitch-collapsed-tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 4px;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.pitch-panel.collapsed:hover .pitch-collapsed-tab {
+  color: var(--text-primary);
+}
+
+.pitch-collapsed-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.pitch-collapsed-icon {
+  font-size: 15px;
+}
+
+.pitch-collapsed-arrow {
+  font-size: 10px;
+  color: var(--canada-red);
+  transition: transform 0.15s ease;
+}
+
+.pitch-panel.collapsed:hover .pitch-collapsed-arrow {
+  transform: translateX(2px);
+}
+
+.pitch-panel-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.pitch-collapse-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 26px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 10px;
+  transition: all var(--transition);
+}
+
+.pitch-collapse-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--canada-red);
+}
+
+.collapse-arrow-desktop {
+  display: inline;
+}
+
+.collapse-arrow-mobile {
+  display: none;
 }
 
 .pitch-panel-header {
@@ -543,6 +646,75 @@ body {
 .stats-table-wrap {
   flex: 1;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: rgba(17, 20, 29, 0.7);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.stats-toolbar-left,
+.stats-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-count-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-toggle-injured {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-toggle-injured:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-toggle-injured.active {
+  background: rgba(213, 43, 30, 0.14);
+  border-color: rgba(213, 43, 30, 0.4);
+  color: #ff857a;
+}
+
+.injured-toggle-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background var(--transition);
+}
+
+.btn-toggle-injured.active .injured-toggle-dot {
+  background: #ff4d4d;
+  box-shadow: 0 0 6px rgba(255, 77, 77, 0.6);
 }
 
 /* ============================================
@@ -1204,4 +1376,196 @@ body {
   background: var(--bg-card) !important;
   backdrop-filter: none !important;
   border-top: 1px solid var(--border) !important;
+}
+
+/* ============================================
+   RESPONSIVE / MOBILE STYLES
+   ============================================ */
+@media (max-width: 860px) {
+  .app-shell {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .app-header {
+    padding: 8px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .app-header-brand img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .app-header-title {
+    font-size: 14px;
+  }
+
+  .app-header-subtitle {
+    font-size: 9px;
+  }
+
+  .app-header-actions {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .stadium-select {
+    padding: 4px 6px;
+    font-size: 10px;
+    margin-right: 0;
+  }
+
+  .btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  /* Portrait mode: stack pitch vertically on top of roster */
+  .app-main {
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pitch-panel {
+    width: 100%;
+    height: 380px;
+    max-height: 48vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .pitch-panel.collapsed {
+    width: 100%;
+    min-width: unset;
+    height: 40px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .pitch-panel.collapsed .pitch-collapsed-tab {
+    flex-direction: row;
+    padding: 0 14px;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .pitch-panel.collapsed .pitch-collapsed-text {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 11px;
+  }
+
+  .collapse-arrow-desktop {
+    display: none;
+  }
+
+  .collapse-arrow-mobile {
+    display: inline;
+  }
+
+  .stats-panel {
+    flex: 1;
+    border-left: none;
+    min-height: 0;
+  }
+
+  .app-footer {
+    padding: 4px 10px;
+    font-size: 9.5px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pitch-panel {
+    height: 340px;
+    max-height: 45vh;
+  }
+  
+  .pitch-outer {
+    padding: 8px;
+  }
+
+  .pitch-slot-token {
+    width: 44px;
+    height: 44px;
+  }
+
+  .pitch-slot-name {
+    font-size: 8px;
+    max-width: 60px;
+  }
+
+  .token-rating {
+    width: 18px;
+    height: 18px;
+    font-size: 8.5px;
+    bottom: -6px;
+    right: -8px;
+  }
+
+  .rating-mode-badge {
+    width: 19px;
+    height: 19px;
+    bottom: -4px;
+    left: -8px;
+    font-size: 7px;
+  }
+
+  .stats-table-toolbar {
+    padding: 4px 10px;
+  }
+
+  .btn-toggle-injured {
+    font-size: 10px;
+    padding: 2px 7px;
+  }
+}
+
+/* Landscape orientation on mobile / small height devices */
+@media (max-height: 550px) and (orientation: landscape) {
+  .app-main {
+    flex-direction: row;
+  }
+
+  .pitch-panel {
+    width: 320px;
+    height: 100%;
+    max-height: 100%;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+  }
+
+  .pitch-panel.collapsed {
+    width: 38px;
+    height: 100%;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: none;
+  }
+
+  .pitch-panel.collapsed .pitch-collapsed-tab {
+    flex-direction: column;
+    padding: 12px 4px;
+  }
+
+  .pitch-panel.collapsed .pitch-collapsed-text {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .collapse-arrow-desktop {
+    display: inline;
+  }
+
+  .collapse-arrow-mobile {
+    display: none;
+  }
+
+  .stats-panel {
+    flex: 1;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }

@@ -32,6 +32,14 @@ export function getRatingBarHeight(rating: number | null): number {
 
 export function formatDate(isoDate: string | null): string {
   if (!isoDate) return '—';
-  const d = new Date(isoDate);
-  return d.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+  const parts = isoDate.split('T')[0].split('-');
+  if (parts.length === 3) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const m = parseInt(parts[1], 10) - 1;
+    const d = parseInt(parts[2], 10);
+    if (m >= 0 && m < 12 && !isNaN(d)) {
+      return `${months[m]} ${d}`;
+    }
+  }
+  return isoDate;
 }

@@ -28,6 +28,7 @@ const STADIUMS = [
   { id: 'bmo-field', name: 'BMO Field (Toronto)', url: 'https://storage.googleapis.com/canpl/assets/617f69ca-e182-4f78-8f9d-9dd799ae2af1.png' },
   { id: 'stade-saputo', name: 'Stade Saputo (Montreal)', url: 'https://image-tc.galaxy.tf/wijpeg-czumzpyhcyzfyd9pgtqputxqm/saputo-stadium.jpg' },
   { id: 'bc-place', name: 'BC Place (Vancouver)', url: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/BC_Place_2015_Women%27s_FIFA_World_Cup.jpg' },
+  { id: 'commonwealth', name: 'Commonwealth Stadium (Edmonton)', url: 'https://stadiumdb.com/pictures/stadiums/can/commonwealth_stadium/commonwealth_stadium16.jpg' },
 ];
 
 export default function DashboardPage() {
@@ -36,21 +37,36 @@ export default function DashboardPage() {
   const [rumours, setRumours] = useState<Record<string, TransferRumour[]>>({});
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [lineup, setLineup] = useState<LineupState>(DEFAULT_LINEUP);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshingRumours, setRefreshingRumours] = useState(false);
   const [rumourdModal, setRumourModal] = useState<{ playerId: string; playerName: string } | null>(null);
   const [activeLeagues, setActiveLeagues] = useState<Set<string>>(new Set());
   const [showLeagueFilter, setShowLeagueFilter] = useState(false);
   const [stadium, setStadium] = useState('bmo-field');
+  const [pitchCollapsed, setPitchCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Load stadium background from localStorage on mount
+  // Load pitch collapsed & stadium background from localStorage on mount
   useEffect(() => {
+    setMounted(true);
     try {
       const saved = localStorage.getItem('canada-tracker-stadium');
       if (saved) setStadium(saved);
+      const savedPitch = localStorage.getItem('canada-tracker-pitch-collapsed');
+      if (savedPitch) setPitchCollapsed(savedPitch === 'true');
     } catch { }
   }, []);
+
+  const handleTogglePitch = () => {
+    setPitchCollapsed(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('canada-tracker-pitch-collapsed', String(next));
+      } catch { }
+      return next;
+    });
+  };
 
   const handleStadiumChange = (id: string) => {
     setStadium(id);
@@ -113,7 +129,13 @@ export default function DashboardPage() {
       setActiveLeagues(prev => {
         if (prev.size === 0 && data.players?.length) {
           const statsMap = data.cache?.players ?? {};
-          return new Set(data.players.map((p: Player) => statsMap[p.id]?.league || p.league || 'Unknown'));
+          return new Set(data.players.map((p: Player) => {
+            const s = statsMap[p.id];
+            if (s?.leagueId === 9986 || s?.league === 'Canadian Premier League' || p.league === 'Canadian Premier League') {
+              return 'Canadian Premier League';
+            }
+            return s?.league || p.league || 'Unknown';
+          }));
         }
         return prev;
       });
@@ -393,13 +415,13 @@ export default function DashboardPage() {
 
   const formatLastUpdated = () => {
     if (!lastUpdated) return 'Never synced — pull stats from FotMob';
+    if (!mounted) return 'Loading stats…';
     const d = new Date(lastUpdated);
     const now = new Date();
     const diffH = (now.getTime() - d.getTime()) / (1000 * 60 * 60);
     const timeStr = d.toLocaleString('en-CA', {
       month: 'short', day: 'numeric',
       hour: '2-digit', minute: '2-digit',
-      timeZoneName: 'short',
     });
     const fresh = diffH < 4;
     return { timeStr, fresh };
@@ -409,9 +431,15 @@ export default function DashboardPage() {
   const isFresh = typeof updatedInfo !== 'string' ? updatedInfo.fresh : false;
   const updatedLabel = typeof updatedInfo === 'string' ? updatedInfo : `Updated ${updatedInfo.timeStr}`;
 
+  const currentStadium = mounted ? stadium : 'bmo-field';
+  const currentPitchCollapsed = mounted ? pitchCollapsed : false;
+
   return (
-    <div className={`app-shell ${stadium === 'opaque' ? 'theme-opaque' : 'theme-glass'}`}>
-      {stadium !== 'opaque' && activeStadium.url && (
+    <div
+      className={`app-shell ${currentStadium === 'opaque' ? 'theme-opaque' : 'theme-glass'}`}
+      suppressHydrationWarning
+    >
+      {currentStadium !== 'opaque' && activeStadium.url && (
         <div
           className="app-shell-bg"
           style={{ backgroundImage: `url(${activeStadium.url})` }}
@@ -433,6 +461,15 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="app-header-actions">
+          <button
+            className={`btn ${pitchCollapsed ? 'btn-ghost' : 'btn-secondary'}`}
+            onClick={handleTogglePitch}
+            title={pitchCollapsed ? 'Show Lineup Pitch' : 'Collapse Lineup Pitch'}
+            style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+          >
+            <span className="btn-icon">⚽</span>
+            {pitchCollapsed ? 'Show Lineup' : 'Hide Lineup'}
+          </button>
           <select
             className="stadium-select"
             value={stadium}
@@ -446,7 +483,7 @@ export default function DashboardPage() {
           <button
             className="btn btn-ghost"
             onClick={() => setShowLeagueFilter(true)}
-            disabled={loading}
+            disabled={mounted && loading}
             title="Filter visible leagues"
           >
             <span className="btn-icon">⚙</span>
@@ -455,7 +492,7 @@ export default function DashboardPage() {
           <button
             className="btn btn-secondary"
             onClick={handleRefreshRumours}
-            disabled={refreshingRumours || loading}
+            disabled={mounted && (refreshingRumours || loading)}
             title="Scrape latest transfer rumours automatically from Transfermarkt"
             style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           >
@@ -474,7 +511,7 @@ export default function DashboardPage() {
           <button
             className="btn btn-primary"
             onClick={handleRefreshStats}
-            disabled={refreshing || loading}
+            disabled={mounted && (refreshing || loading)}
             title="Sync latest player stats and ratings automatically from FotMob"
           >
             {refreshing ? (
@@ -504,6 +541,8 @@ export default function DashboardPage() {
             stats={stats}
             onSlotClick={handleSlotClick}
             onRemovePlayer={handleRemovePlayer}
+            collapsed={currentPitchCollapsed}
+            onToggleCollapse={handleTogglePitch}
           />
 
           {/* Right: Stats */}
@@ -542,7 +581,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v3.0 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v3.1 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}

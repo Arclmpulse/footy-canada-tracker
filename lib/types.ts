@@ -22,6 +22,8 @@ export interface Player {
 export interface GameRating {
   date: string;
   opponent: string;
+  opponentTeamId?: number;
+  opponentTeamLogo?: string;
   rating: number | null;
   minutesPlayed: number;
   competition: string;

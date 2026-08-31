@@ -34,7 +34,11 @@ export default function LeagueFilterModal({
   const leagues = useMemo(() => {
     const map = new Map<string, number>();
     for (const p of players) {
-      const l = stats[p.id]?.league || p.league || 'Unknown';
+      const s = stats[p.id];
+      let l = s?.league || p.league || 'Unknown';
+      if (s?.leagueId === 9986 || s?.league === 'Canadian Premier League' || p.league === 'Canadian Premier League') {
+        l = 'Canadian Premier League';
+      }
       map.set(l, (map.get(l) ?? 0) + 1);
     }
     return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
