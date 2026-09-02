@@ -5,6 +5,7 @@ import {
   DndContext,
   DragEndEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   pointerWithin,
@@ -206,7 +207,8 @@ export default function DashboardPage() {
 
   // ──── DnD ────────────────────────────
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -592,7 +594,7 @@ export default function DashboardPage() {
           <div className={`footer-dot ${isFresh ? '' : 'stale'}`} />
           <span>{updatedLabel}</span>
         </div>
-        <span>🍁 Canada Footy Tracker · v3.1 · Automated FotMob API data synchronization</span>
+        <span>🍁 Canada Footy Tracker · v3.2 · Automated FotMob API data synchronization</span>
       </footer>
 
       {/* ── Rumour Modal ── */}

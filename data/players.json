@@ -6,8 +6,8 @@
       "ST",
       "SS"
     ],
-    "club": "Juventus",
-    "league": "Serie A",
+    "club": "Atlético Madrid",
+    "league": "LaLiga",
     "fotmob_id": 939569
   },
   {
@@ -72,8 +72,8 @@
       "LM",
       "LW"
     ],
-    "club": "Hull City",
-    "league": "Premier League",
+    "club": "Birmingham City",
+    "league": "Championship",
     "fotmob_id": 932308
   },
   {
@@ -118,8 +118,8 @@
       "DM",
       "CM"
     ],
-    "club": "Hajduk Split",
-    "league": "HNL",
+    "club": "Toulouse",
+    "league": "Ligue 1",
     "fotmob_id": 1494508
   },
   {
@@ -215,7 +215,7 @@
     "positions": [
       "GK"
     ],
-    "club": "Orlando City",
+    "club": "MLS All-Stars",
     "league": "Major League Soccer",
     "fotmob_id": 464919
   },
@@ -266,7 +266,7 @@
       "RWB",
       "RW"
     ],
-    "club": "Toronto FC",
+    "club": "MLS All-Stars",
     "league": "Major League Soccer",
     "fotmob_id": 729506
   },
@@ -345,8 +345,8 @@
     "positions": [
       "GK"
     ],
-    "club": "Atlanta United 2",
-    "league": "MLS Next Pro",
+    "club": "Atlanta United",
+    "league": "Major League Soccer",
     "fotmob_id": 1649302
   },
   {

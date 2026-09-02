@@ -1856,7 +1856,7 @@ body {
   }
 
   .pitch-panel {
-    width: 320px;
+    width: 280px;
     height: 100%;
     max-height: 100%;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -1896,6 +1896,43 @@ body {
   .stats-table-wrap {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+
+  /* Show card layout instead of table in landscape mobile — touch scrolling
+     a multi-axis sticky-header table is inherently unreliable on mobile */
+  .stats-table {
+    display: none;
+  }
+
+  .player-card-list {
+    display: flex;
+  }
+
+  .stats-search-kbd {
+    display: none;
+  }
+
+  .pos-group-badges {
+    display: none;
+  }
+
+  .stats-table-toolbar {
+    flex-wrap: wrap;
+    padding: 4px 10px;
+  }
+
+  .stats-panel-header {
+    padding: 6px 12px;
+  }
+
+  .app-header {
+    padding: 4px 10px;
+  }
+
+  .app-footer {
+    padding: 3px 10px;
+    font-size: 9px;
   }
 }
 
@@ -1915,6 +1952,20 @@ body {
 
   .player-card-list {
     display: flex;
+    width: 100%;
+  }
+
+  .player-card-list-inner {
+    width: 100%;
+  }
+
+  .player-card {
+    width: 100%;
+    padding: 10px 14px;
+  }
+
+  .stats-table-wrap {
+    padding: 0;
   }
 
   .stats-search-input {

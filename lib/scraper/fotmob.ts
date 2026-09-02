@@ -59,8 +59,24 @@ export async function fetchFotMobPlayerStats(
     if (!data) return null;
 
     // 1. Club & League metadata
-    const club = data.primaryTeam?.teamName || 'Unknown';
-    const clubTeamId = data.primaryTeam?.teamId || null;
+    // primaryTeam may lag behind on transfers — check careerHistory for the most up-to-date active team
+    let club = data.primaryTeam?.teamName || 'Unknown';
+    let clubTeamId = data.primaryTeam?.teamId || null;
+
+    // careerHistory.careerItems.senior.teamEntries shows transfers immediately (active: true)
+    try {
+      const teamEntries = data.careerHistory?.careerItems?.senior?.teamEntries;
+      if (Array.isArray(teamEntries) && teamEntries.length > 0) {
+        const activeEntry = teamEntries.find((e: any) => e.active === true);
+        if (activeEntry && activeEntry.teamId && activeEntry.team) {
+          club = activeEntry.team;
+          clubTeamId = activeEntry.teamId;
+        }
+      }
+    } catch {
+      // Fall back to primaryTeam if careerHistory parsing fails
+    }
+
     const currentSeason = data.mainLeague?.season || '25/26';
 
     // Accurately resolve current league (handles mid-season transfers where mainLeague lags behind)
