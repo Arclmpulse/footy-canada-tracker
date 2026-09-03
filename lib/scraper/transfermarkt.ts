@@ -122,6 +122,7 @@ export async function fetchTransfermarktRumours(players: Player[]): Promise<Reco
         isManual: false,
         targetClub: interestedClub || undefined,
         targetClubLogo: interestedClubLogo || undefined,
+        marketValue: (marketValue && marketValue !== '-') ? marketValue : undefined,
       };
 
       if (!rumoursMap[matchedPlayer.id]) {

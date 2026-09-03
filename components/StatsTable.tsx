@@ -39,6 +39,7 @@ const StatsTable = React.memo(function StatsTable({
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [injuredToBottom, setInjuredToBottom] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
   // Keyboard shortcuts: / to focus search, Esc to clear
@@ -220,6 +221,13 @@ const StatsTable = React.memo(function StatsTable({
           </div>
         </div>
         <div className="stats-toolbar-right">
+          <button
+            className={`mobile-sort-value-btn ${sortKey === 'value' ? 'active' : ''}`}
+            onClick={() => handleSort('value')}
+            title="Sort by transfer value"
+          >
+            💰 {sortKey === 'value' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
+          </button>
           <div className="stats-search-wrap">
             <span className="stats-search-icon">🔍</span>
             <input
@@ -475,61 +483,147 @@ const StatsTable = React.memo(function StatsTable({
         </table>
 
         {/* Mobile card layout (visible at ≤600px via CSS) */}
-        <div className="player-card-list">
+        <div
+          className="player-card-list"
+          onScroll={() => {
+            if (expandedCardId) setExpandedCardId(null);
+          }}
+        >
           <div className="player-card-list-inner">
             {sorted.map(player => {
               const s = stats[player.id];
               const isOnPitch = lineupPlayerIds.has(player.id);
               const primaryPosition = s?.positionsDetailed?.[0] ?? player.positions[0] ?? 'ST';
               const displayClub = s?.club || player.club;
+              const displayLeague = getNormalizedLeague(s, player);
               const teamLogo = teamLogoUrl(s?.teamId);
-              const rating = s?.seasonAvgRating;
+              const leagueLogo = leagueLogoUrl(s?.leagueId);
+              const lastGameRating = s?.lastGameRating;
+              const isFlipped = expandedCardId === player.id;
+
+              const lastGame = s?.last5Games?.[0];
+              const lastOpponent = lastGame?.opponent;
+              const lastOpponentTeamId = lastGame?.opponentTeamId;
+
+              const playerRumours = rumours[player.id] ?? [];
+
+              // Hybrid market value: prefer TM value if player has TM rumours with one, otherwise FotMob
+              const tmValue = playerRumours.find(r => r.source === 'Transfermarkt' && r.marketValue)?.marketValue;
+              const displayValue = tmValue || s?.marketValue;
 
               return (
                 <DraggableCard key={player.id} playerId={player.id} isOnPitch={isOnPitch}>
-                  <span className={`pos-badge ${primaryPosition}`} style={{ fontSize: 10, padding: '2px 6px' }}>
-                    {primaryPosition}
-                  </span>
-                  <div className="player-card-main">
-                    <div className="player-card-top">
-                      {s?.injured && <span className="injury-icon" title="Injured">🇨🇭</span>}
-                      <span className="player-card-name">
-                        {player.fotmob_url || player.fotmob_id ? (
-                          <a
-                            href={player.fotmob_url || `https://www.fotmob.com/players/${player.fotmob_id}/`}
-                            target="_blank"
-                            rel="noreferrer"
-                            onPointerDown={e => e.stopPropagation()}
-                          >
-                            {player.name}
-                          </a>
-                        ) : player.name}
-                      </span>
-                    </div>
-                    <div className="player-card-club">
-                      {teamLogo && (
-                        <img
-                          src={teamLogo}
-                          alt={displayClub}
-                          width={13} height={13}
-                          style={{ objectFit: 'contain' }}
-                          onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                        />
-                      )}
-                      {displayClub}
-                    </div>
-                    <div className="player-card-stats">
-                      {s?.appearances != null && <span className="player-card-stat">Apps {s.appearances}</span>}
-                      {(s?.goals ?? 0) > 0 && <span className="player-card-stat highlight">⚽ {s!.goals}</span>}
-                      {(s?.assists ?? 0) > 0 && <span className="player-card-stat" style={{ background: 'rgba(82,147,227,0.12)', color: '#5293e3' }}>🅰 {s!.assists}</span>}
-                      {s?.marketValue && <span className="player-card-stat">{s.marketValue}</span>}
-                    </div>
-                  </div>
-                  <div className="player-card-rating">
-                    <span className="player-card-rating-value" style={{ color: getRatingColor(rating ?? null) }}>
-                      {rating != null ? rating.toFixed(1) : '—'}
-                    </span>
-                    <span className="player-card-rating-label">AVG</span>
+                  <div
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', minHeight: 42 }}
+                    onClick={(e) => {
+                      if ((e.target as HTMLElement).tagName === 'A') return;
+                      setExpandedCardId(prev => prev === player.id ? null : player.id);
+                    }}
+                  >
+                    {!isFlipped ? (
+                      /* ── FRONT FACE ── */
+                      <>
+                        <span className={`pos-badge ${primaryPosition}`} style={{ fontSize: 10, padding: '2px 6px' }}>
+                          {primaryPosition}
+                        </span>
+                        <div className="player-card-main">
+                          <div className="player-card-top">
+                            {s?.injured && <span className="injury-icon" title="Injured">🇨🇭</span>}
+                            <span className="player-card-name">
+                              {player.fotmob_url || player.fotmob_id ? (
+                                <a
+                                  href={player.fotmob_url || `https://www.fotmob.com/players/${player.fotmob_id}/`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  onPointerDown={e => e.stopPropagation()}
+                                >
+                                  {player.name}
+                                </a>
+                              ) : player.name}
+                            </span>
+                          </div>
+                          <div className="player-card-club">
+                            {teamLogo && (
+                              <img
+                                src={teamLogo}
+                                alt={displayClub}
+                                width={13} height={13}
+                                style={{ objectFit: 'contain' }}
+                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                            )}
+                            {displayClub}
+                          </div>
+                          <div className="player-card-stats">
+                            {s?.appearances != null && <span className="player-card-stat">Apps {s.appearances}</span>}
+                            {(s?.goals ?? 0) > 0 && <span className="player-card-stat highlight">⚽ {s!.goals}</span>}
+                            {(s?.assists ?? 0) > 0 && <span className="player-card-stat" style={{ background: 'rgba(82,147,227,0.12)', color: '#5293e3' }}>🅰 {s!.assists}</span>}
+                            {displayValue && <span className="player-card-stat">{displayValue}</span>}
+                          </div>
+                        </div>
+                        <div className="player-card-rating">
+                          <span className="player-card-rating-value" style={{ color: getRatingColor(lastGameRating ?? null) }}>
+                            {lastGameRating != null ? lastGameRating.toFixed(1) : '—'}
+                          </span>
+                          <span className="player-card-rating-label">LAST</span>
+                        </div>
+                      </>
+                    ) : (
+                      /* ── BACK FACE (flipped) ── */
+                      <div className="player-card-flipped" style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                          <span className="player-card-name" style={{ fontSize: 12, fontWeight: 800 }}>{player.name}</span>
+                          {s?.age != null && <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>({s.age})</span>}
+                        </div>
+                        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                          {/* League */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10.5, color: 'var(--text-secondary)' }}>
+                            {leagueLogo && (
+                              <img src={leagueLogo} alt="" width={13} height={13} style={{ objectFit: 'contain' }}
+                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                            )}
+                            {displayLeague}
+                          </div>
+                          {/* Avg */}
+                          {s?.seasonAvgRating != null && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Avg</span>
+                              <RatingChip rating={s.seasonAvgRating} />
+                            </div>
+                          )}
+                          {/* Last game */}
+                          {lastOpponent && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <RatingChip rating={lastGameRating ?? null} />
+                              <span style={{ fontSize: 9.5, color: 'var(--text-muted)' }}>vs</span>
+                              {lastOpponentTeamId && (
+                                <img
+                                  src={`https://images.fotmob.com/image_resources/logo/teamlogo/${lastOpponentTeamId}.png`}
+                                  alt={lastOpponent} width={13} height={13} style={{ objectFit: 'contain' }}
+                                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                />
+                              )}
+                              <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-primary)' }}>{lastOpponent}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                          {/* Last 5 bars */}
+                          {s?.last5Games && s.last5Games.length > 0 && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>L5</span>
+                              <Last5Bars games={s.last5Games} />
+                            </div>
+                          )}
+                          {/* Rumour snippet */}
+                          {playerRumours.length > 0 && (
+                            <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180 }}>
+                              📰 {playerRumours[0].headline}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </DraggableCard>
               );
@@ -566,7 +660,7 @@ function DraggableCard({ playerId, isOnPitch, children }: { playerId: string; is
       {...listeners}
       {...attributes}
       className={`player-card ${isOnPitch ? 'on-pitch' : ''}`}
-      style={{ cursor: 'grab', opacity: isDragging ? 0.35 : 1 }}
+      style={{ cursor: 'grab', opacity: isDragging ? 0.35 : 1, flexDirection: 'column', alignItems: 'stretch' }}
     >
       {children}
     </div>

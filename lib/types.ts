@@ -66,6 +66,7 @@ export interface TransferRumour {
   feeOriginal?: string;
   feeAmount?: number;
   currency?: string;
+  marketValue?: string;
 }
 
 export interface StatsCache {

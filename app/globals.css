@@ -1848,6 +1848,19 @@ body {
   }
 }
 
+/* ============================================
+   MOBILE CARD VISIBILITY TOGGLES
+   ============================================ */
+/* Hide card list on desktop, show table — MUST come before landscape/mobile overrides */
+.player-card-list {
+  display: none;
+}
+
+/* Mobile sort-by-value button — hidden on desktop */
+.mobile-sort-value-btn {
+  display: none;
+}
+
 /* Landscape orientation on mobile / small height devices */
 @media (max-height: 550px) and (orientation: landscape) {
   .app-main {
@@ -1899,14 +1912,22 @@ body {
     touch-action: pan-x pan-y;
   }
 
-  /* Show card layout instead of table in landscape mobile — touch scrolling
-     a multi-axis sticky-header table is inherently unreliable on mobile */
+  /* Show card layout instead of table in landscape mobile */
   .stats-table {
     display: none;
   }
 
   .player-card-list {
     display: flex;
+    width: 100%;
+  }
+
+  .player-card-list-inner {
+    width: 100%;
+  }
+
+  .player-card {
+    width: 100%;
   }
 
   .stats-search-kbd {
@@ -1923,25 +1944,52 @@ body {
   }
 
   .stats-panel-header {
-    padding: 6px 12px;
+    padding: 4px 12px;
   }
 
+  /* Landscape header — halved height, single compact row */
   .app-header {
-    padding: 4px 10px;
+    padding: 2px 10px;
+    min-height: 0;
+    gap: 6px;
+  }
+
+  .app-header-brand img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .app-header-title {
+    font-size: 11px;
+  }
+
+  .app-header-subtitle {
+    display: none;
+  }
+
+  .app-header-actions {
+    gap: 4px;
+  }
+
+  .app-header-actions .btn {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .app-header-actions .stadium-select {
+    padding: 2px 5px;
+    font-size: 9px;
   }
 
   .app-footer {
-    padding: 3px 10px;
-    font-size: 9px;
+    padding: 2px 10px;
+    font-size: 8.5px;
   }
-}
 
-/* ============================================
-   MOBILE CARD VISIBILITY TOGGLES
-   ============================================ */
-/* Hide card list on desktop, show table */
-.player-card-list {
-  display: none;
+  /* Show sort-by-value in landscape too */
+  .mobile-sort-value-btn {
+    display: inline-flex;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1987,4 +2035,102 @@ body {
   .stats-table-toolbar {
     flex-wrap: wrap;
   }
+
+  /* Show sort-by-value button on mobile portrait */
+  .mobile-sort-value-btn {
+    display: inline-flex;
+  }
+}
+
+/* ============================================
+   EXPANDABLE PLAYER CARD DETAILS
+   ============================================ */
+.player-card-expanded-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0 4px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+  animation: card-expand 0.15s ease;
+}
+
+@keyframes card-expand {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+  }
+}
+
+.player-card-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.player-card-detail-label {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+.player-card-detail-value {
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.player-card-expand-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.player-card-expand-hint.expanded {
+  transform: rotate(180deg);
+}
+
+/* Mobile sort button styling */
+.mobile-sort-value-btn {
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.mobile-sort-value-btn:hover,
+.mobile-sort-value-btn:active {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.mobile-sort-value-btn.active {
+  background: rgba(238, 193, 40, 0.14);
+  border-color: rgba(238, 193, 40, 0.4);
+  color: var(--rating-avg);
 }
