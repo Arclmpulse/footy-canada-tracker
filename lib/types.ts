@@ -27,6 +27,15 @@ export interface GameRating {
   rating: number | null;
   minutesPlayed: number;
   competition: string;
+  homeScore?: number;
+  awayScore?: number;
+  isHomeTeam?: boolean;
+  matchResult?: 'W' | 'D' | 'L';
+  playerGoals?: number;
+  playerAssists?: number;
+  onBench?: boolean;
+  teamName?: string;
+  teamId?: number;
 }
 
 export interface PlayerStats {

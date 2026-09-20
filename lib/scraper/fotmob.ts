@@ -5,6 +5,8 @@ const headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
   'Accept': 'application/json',
   'Referer': 'https://www.fotmob.com/',
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  'Pragma': 'no-cache',
 };
 
 const teamLeagueCache = new Map<number, { league: string; leagueId: number }>();
@@ -51,7 +53,8 @@ export async function fetchFotMobPlayerStats(
   playerId: string,
   fotmobId: number
 ): Promise<PlayerStats | null> {
-  const url = `https://www.fotmob.com/api/data/playerData?id=${fotmobId}`;
+  // Cache-busting timestamp to prevent CDN serving stale responses
+  const url = `https://www.fotmob.com/api/data/playerData?id=${fotmobId}&_t=${Date.now()}`;
   try {
     const res = await axios.get(url, { headers, timeout: 10000 });
     const data = res.data;
@@ -170,24 +173,37 @@ export async function fetchFotMobPlayerStats(
       }
     }
 
-    // 5. Recent Matches & Ratings (Club games only)
+    // 5. Recent Matches & Ratings (Club games — includes bench/DNP appearances)
     const rawMatches = data.recentMatches || [];
     const clubMatches = rawMatches.filter((m: any) => {
       // Since all players are Canadian, any match NOT for Canada is a club match.
-      // This correctly handles transfers too — old club matches are included.
       const isNationalTeam = m.teamName === 'Canada';
-      const hasPlayed = m.playedInMatch === true || (m.minutesPlayed && m.minutesPlayed > 0);
-      return !isNationalTeam && hasPlayed;
+      // Include both played matches AND bench appearances (onBench=true)
+      const wasInSquad = m.playedInMatch === true || (m.minutesPlayed && m.minutesPlayed > 0) || m.onBench === true;
+      return !isNationalTeam && wasInSquad;
     });
 
-    // Take last 5 club games
+    // Take last 5 club games (including DNP)
     const last5Events = clubMatches.slice(0, 5);
     const last5Games: GameRating[] = last5Events.map((m: any) => {
       const date = m.matchDate?.utcTime ? m.matchDate.utcTime.split('T')[0] : '';
       const opponent = m.opponentTeamName || 'Unknown';
       const opponentTeamId = m.opponentTeamId ? parseInt(m.opponentTeamId, 10) : undefined;
       const rawRating = m.ratingProps?.rating;
-      const rating = rawRating && rawRating > 0 ? Math.round(rawRating * 10) / 10 : null;
+      const didPlay = m.playedInMatch === true || (m.minutesPlayed && m.minutesPlayed > 0);
+      const rating = didPlay && rawRating && parseFloat(rawRating) > 0 ? Math.round(parseFloat(rawRating) * 10) / 10 : null;
+
+      // Compute match result from scores + side
+      const homeScore = m.homeScore != null ? parseInt(m.homeScore, 10) : undefined;
+      const awayScore = m.awayScore != null ? parseInt(m.awayScore, 10) : undefined;
+      const isHomeTeam = m.isHomeTeam ?? undefined;
+      let matchResult: 'W' | 'D' | 'L' | undefined;
+      if (homeScore != null && awayScore != null && isHomeTeam != null) {
+        if (homeScore === awayScore) matchResult = 'D';
+        else if ((isHomeTeam && homeScore > awayScore) || (!isHomeTeam && awayScore > homeScore)) matchResult = 'W';
+        else matchResult = 'L';
+      }
+
       return {
         date,
         opponent,
@@ -195,12 +211,23 @@ export async function fetchFotMobPlayerStats(
         rating,
         minutesPlayed: m.minutesPlayed || 0,
         competition: m.leagueName || league,
+        homeScore,
+        awayScore,
+        isHomeTeam,
+        matchResult,
+        playerGoals: m.goals || 0,
+        playerAssists: m.assists || 0,
+        onBench: m.onBench === true && !didPlay,
+        teamName: m.teamName || club,
+        teamId: m.teamId ? parseInt(m.teamId, 10) : undefined,
       };
     });
 
-    // Compute last game rating & L5 average rating
-    const lastGameRating = last5Games.length > 0 ? last5Games[0].rating : null;
-    const lastGameDate = last5Games.length > 0 ? last5Games[0].date : null;
+    // Compute last game rating & date from the most recent match
+    const lastGame = last5Games.length > 0 ? last5Games[0] : null;
+    const didPlayLast = lastGame && !lastGame.onBench && (lastGame.minutesPlayed || 0) > 0;
+    const lastGameRating = didPlayLast ? lastGame!.rating : null;
+    const lastGameDate = lastGame ? lastGame.date : null;
 
     const ratedGames = last5Games.filter(g => g.rating !== null);
     const last5AvgRating =

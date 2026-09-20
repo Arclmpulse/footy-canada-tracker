@@ -5,6 +5,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { Player, PlayerStats, TransferRumour } from '@/lib/types';
 import { getRatingClass, getRatingColor, getRatingBarHeight, formatDate } from './utils';
 import leagueRankings from '../data/league-rankings.json';
+import WeeklyMatchView from './WeeklyMatchView';
 
 type SortKey = 'name' | 'position' | 'club' | 'league' | 'appearances' | 'goals' | 'assists' | 'last5Avg' | 'seasonAvg' | 'lastGame' | 'age' | 'value';
 type SortDir = 'asc' | 'desc';
@@ -40,6 +41,7 @@ const StatsTable = React.memo(function StatsTable({
   const [injuredToBottom, setInjuredToBottom] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const [weeklyView, setWeeklyView] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   // Keyboard shortcuts: / to focus search, Esc to clear
@@ -167,9 +169,13 @@ const StatsTable = React.memo(function StatsTable({
         case 'goals': av = sa?.goals ?? -1; bv = sb?.goals ?? -1; break;
         case 'assists': av = sa?.assists ?? -1; bv = sb?.assists ?? -1; break;
         case 'last5Avg': av = sa?.last5AvgRating ?? -1; bv = sb?.last5AvgRating ?? -1; break;
-        case 'seasonAvg': av = sa?.seasonAvgRating ?? -1; bv = sb?.seasonAvgRating ?? -1; break;
-        case 'lastGame': av = sa?.lastGameRating ?? -1; bv = sb?.lastGameRating ?? -1; break;
-        case 'age': av = sa?.age ?? 99; bv = sb?.age ?? 99; break;
+        case 'lastGame': {
+          const isDnpA = sa?.last5Games?.[0]?.onBench === true || (sa?.last5Games?.[0] != null && !sa?.last5Games?.[0].rating && (sa?.last5Games?.[0].minutesPlayed || 0) === 0);
+          const isDnpB = sb?.last5Games?.[0]?.onBench === true || (sb?.last5Games?.[0] != null && !sb?.last5Games?.[0].rating && (sb?.last5Games?.[0].minutesPlayed || 0) === 0);
+          av = isDnpA ? -1 : (sa?.lastGameRating ?? sa?.last5Games?.[0]?.rating ?? -1);
+          bv = isDnpB ? -1 : (sb?.lastGameRating ?? sb?.last5Games?.[0]?.rating ?? -1);
+          break;
+        }
         case 'value': {
           const parseVal = (v?: string) => {
             if (!v) return 0;
@@ -249,10 +255,20 @@ const StatsTable = React.memo(function StatsTable({
             <span className="injured-toggle-dot" />
             <span>🚑 Injured to bottom</span>
           </button>
+          <button
+            className={`btn-toggle-weekly ${weeklyView ? 'active' : ''}`}
+            onClick={() => setWeeklyView(prev => !prev)}
+            title={weeklyView ? 'Switch to stats view' : 'Show this week\'s matches'}
+          >
+            {weeklyView ? '📊 Stats' : '📅 This Week'}
+          </button>
         </div>
       </div>
-      <div className="stats-table-wrap">
-        <table className="stats-table">
+      {weeklyView ? (
+        <WeeklyMatchView players={players} stats={stats} />
+      ) : (
+        <div className="stats-table-wrap">
+          <table className="stats-table">
           <thead>
             <tr>
               <Th label="Pos" col="position" />
@@ -300,12 +316,16 @@ const StatsTable = React.memo(function StatsTable({
                   : [];
 
               const lastGame = s?.last5Games?.[0];
+              const isLastDNP = lastGame?.onBench === true || (lastGame != null && !lastGame.rating && (lastGame.minutesPlayed || 0) === 0);
               const lastOpponent = lastGame?.opponent;
               const lastOpponentTeamId = lastGame?.opponentTeamId;
               const lastComp = lastGame?.competition;
-              const lastGameTooltip = lastOpponent
-                ? `vs ${lastOpponent}${lastComp ? ` (${lastComp})` : ''}`
-                : undefined;
+              const lastGameRating = isLastDNP ? null : (lastGame?.rating ?? s?.lastGameRating ?? null);
+              const lastGameTooltip = isLastDNP
+                ? `Did not play (bench) vs ${lastOpponent || 'Unknown'}${lastComp ? ` (${lastComp})` : ''}`
+                : lastOpponent
+                  ? `vs ${lastOpponent}${lastComp ? ` (${lastComp})` : ''}`
+                  : undefined;
 
               return (
                 <DraggableRow key={player.id} playerId={player.id} isOnPitch={isOnPitch}>
@@ -414,7 +434,7 @@ const StatsTable = React.memo(function StatsTable({
                         style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}
                         title={lastGameTooltip}
                       >
-                        <RatingChip rating={s?.lastGameRating ?? null} title={lastGameTooltip} />
+                        <RatingChip rating={lastGameRating} isDnp={isLastDNP} title={lastGameTooltip} />
                         {lastOpponent && (
                           <div
                             className="last-game-vs-row"
@@ -498,10 +518,11 @@ const StatsTable = React.memo(function StatsTable({
               const displayLeague = getNormalizedLeague(s, player);
               const teamLogo = teamLogoUrl(s?.teamId);
               const leagueLogo = leagueLogoUrl(s?.leagueId);
-              const lastGameRating = s?.lastGameRating;
+              const lastGame = s?.last5Games?.[0];
+              const isLastDNP = lastGame?.onBench === true || (lastGame != null && !lastGame.rating && (lastGame.minutesPlayed || 0) === 0);
+              const lastGameRating = isLastDNP ? null : (lastGame?.rating ?? s?.lastGameRating ?? null);
               const isFlipped = expandedCardId === player.id;
 
-              const lastGame = s?.last5Games?.[0];
               const lastOpponent = lastGame?.opponent;
               const lastOpponentTeamId = lastGame?.opponentTeamId;
 
@@ -562,8 +583,11 @@ const StatsTable = React.memo(function StatsTable({
                           </div>
                         </div>
                         <div className="player-card-rating">
-                          <span className="player-card-rating-value" style={{ color: getRatingColor(lastGameRating ?? null) }}>
-                            {lastGameRating != null ? lastGameRating.toFixed(1) : '—'}
+                          <span
+                            className={`player-card-rating-value ${isLastDNP ? 'dnp' : ''}`}
+                            style={{ color: isLastDNP ? 'var(--text-muted)' : getRatingColor(lastGameRating ?? null) }}
+                          >
+                            {isLastDNP ? 'DNP' : lastGameRating != null ? lastGameRating.toFixed(1) : '—'}
                           </span>
                           <span className="player-card-rating-label">LAST</span>
                         </div>
@@ -594,7 +618,7 @@ const StatsTable = React.memo(function StatsTable({
                           {/* Last game */}
                           {lastOpponent && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                              <RatingChip rating={lastGameRating ?? null} />
+                              <RatingChip rating={lastGameRating ?? null} isDnp={isLastDNP} />
                               <span style={{ fontSize: 9.5, color: 'var(--text-muted)' }}>vs</span>
                               {lastOpponentTeamId && (
                                 <img
@@ -630,7 +654,8 @@ const StatsTable = React.memo(function StatsTable({
             })}
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 });
@@ -667,7 +692,14 @@ function DraggableCard({ playerId, isOnPitch, children }: { playerId: string; is
   );
 }
 
-function RatingChip({ rating, title }: { rating: number | null; title?: string }) {
+function RatingChip({ rating, isDnp, title }: { rating: number | null; isDnp?: boolean; title?: string }) {
+  if (isDnp) {
+    return (
+      <span className="rating-chip dnp" title={title || 'Did not play (bench)'}>
+        DNP
+      </span>
+    );
+  }
   const cls = getRatingClass(rating);
   return (
     <span className={`rating-chip ${cls}`} title={title}>

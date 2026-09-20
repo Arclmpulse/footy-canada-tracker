@@ -42,6 +42,26 @@
     "fotmob_id": 1252132
   },
   {
+    "id": "theo-bair",
+    "name": "Theo Bair",
+    "positions": [
+      "ST"
+    ],
+    "club": "Bolton Wanderers",
+    "league": "Championship",
+    "fotmob_id": 942893
+  },
+  {
+    "id": "marcus-caldeira",
+    "name": "Marcus Caldeira",
+    "positions": [
+      "ST"
+    ],
+    "club": "Minnesota United 2",
+    "league": "MLS Next Pro",
+    "fotmob_id": 1610316
+  },
+  {
     "id": "marcelo-flores",
     "name": "Marcelo Flores",
     "positions": [
@@ -174,8 +194,8 @@
       "RB",
       "LB"
     ],
-    "club": "Fulham",
-    "league": "Premier League",
+    "club": "Real Salt Lake",
+    "league": "Major League Soccer",
     "fotmob_id": 1399943
   },
   {
