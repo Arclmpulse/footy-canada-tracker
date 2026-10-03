@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadCache, saveCache, loadPlayers, runScrape } from '@/lib/scrapeRunner';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   const cache = loadCache();
   const players = loadPlayers();
